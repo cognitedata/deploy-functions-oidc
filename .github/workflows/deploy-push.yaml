@@ -1,0 +1,73 @@
+name: Deploy Function in customer environment
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    name: Deploy to Cognite Functions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        function:
+          - example_function1
+          - example_function2
+          - example_with_logging
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Extract service name
+        shell: bash
+        # if branch has underscores they will be replaced with hyphens
+        run: |
+          echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/_/-/g)"
+          echo "##[set-output name=under_name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/-/_/g)"
+        id: extract_name
+
+      - name: Resolve secrets
+        shell: bash
+        env:
+          BRANCH: ${{ steps.extract_name.outputs.under_name }}
+        # secret names should contain branch name with hyphens (if applicable)
+        run: |
+          echo "##[set-output name=deployment_secret;]$(echo deploy_${BRANCH})"
+          echo "##[set-output name=runtime_secret;]$(echo runtime_${BRANCH})"
+          echo "##[set-output name=extra_secret;]$(echo secrets_${{ matrix.function }}_${BRANCH})"
+        id: extract_secrets
+
+      - name: Install yq
+        run: |
+            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.0/yq_linux_amd64
+            sudo chmod +x /usr/local/bin/yq
+
+      - name: Extract config file parameters
+        shell: bash
+        run: |
+          FILE="${{ matrix.function }}/function_config.yaml"
+          if [ ! -f $FILE ]; then
+              echo "Config: $FILE not supplied!"
+          else
+              ALLKEYS=$(yq e "... comments=\"\" | keys" $FILE)
+              for CONFIGURATION in $ALLKEYS
+              do
+                if [ "$CONFIGURATION" != "-" ]; then
+                    VALUE=$(yq e ".$CONFIGURATION" $FILE)
+                    echo ::set-output name=$CONFIGURATION::$VALUE
+                fi
+              done
+          fi
+        id: extract_params
+
+      - name: Deploy and schedule ${{ matrix.function }}
+        uses: cognitedata/function-action@v4
+        with:
+          function_name: ${{ matrix.function }}-${{ steps.extract_name.outputs.name }}
+          cdf_runtime_credentials: ${{ secrets[steps.extract_secrets.outputs.runtime_secret] }}
+          cdf_deployment_credentials: ${{ secrets[steps.extract_secrets.outputs.deployment_secret] }}
+          cdf_base_url: ${{ steps.extract_params.outputs.cdf_base_url }}
+          function_folder: ${{ matrix.function }}
+          function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
+          schedule_file: schedules/${{ steps.extract_name.outputs.name }}.yaml
+          owner: ${{ steps.extract_params.outputs.owner }}
+          cpu: ${{ steps.extract_params.outputs.cpu }}
+          memory: ${{ steps.extract_params.outputs.memory }}

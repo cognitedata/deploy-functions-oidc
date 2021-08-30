@@ -1,0 +1,2 @@
+# Example: You need a specific pandas version:
+# pandas==1.2.3

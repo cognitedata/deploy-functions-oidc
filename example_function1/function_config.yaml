@@ -1,0 +1,5 @@
+cdf_base_url: https://api.cognitedata.com
+# data_set_external_id: my-data-set-external-id-string
+owner: deploy-functions
+cpu: 0.25
+memory: 1.0

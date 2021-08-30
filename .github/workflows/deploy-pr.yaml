@@ -1,0 +1,30 @@
+name: Validate Pull Request
+on:
+  pull_request:
+jobs:
+  deploy:
+    name: Validate Pull Request (unit tests)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        function:
+          - example_function1
+          - example_function2
+          - example_with_logging
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade poetry
+          poetry install
+
+      - name: Test code using unit tests
+        run: PYTHONPATH=${{ matrix.function }} poetry run pytest tests/${{ matrix.function }} -m "unit" --suppress-no-test-exit-code
+
+      # If your repo decides to rename 'common', remember to update below:
+      - name: Test util/shared code
+        run: poetry run pytest tests/common -m "unit" --suppress-no-test-exit-code
