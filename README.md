@@ -1,3 +1,4 @@
+# NOT UPDATED TO OIDC, YET!
 # Cognite function template
 ![Deploy function](https://github.com/cognitedata/deploy-functions/workflows/Deploy%20function/badge.svg)
 
