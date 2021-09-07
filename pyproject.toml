@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "deploy-functions-oidc-template"
 version = "1.0.0"
-description = "Cognite Functions template"
+description = "Cognite Functions template for OIDC projects"
 authors = ["hakon.treider@cognite.com"]
 
 [tool.poetry.dependencies]
@@ -25,22 +25,3 @@ known_third_party = ["cognite","pytest"]
 
 [tool.black]
 line-length = 120
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  | tests/.*/setup.py
-)/
-'''
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"

@@ -1,21 +1,14 @@
-name: Code Quality
+name: Code Quality checks for PRs
 
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
 
 jobs:
   pre-commit:
-    name: Linting
+    name: Pre-Commit checks
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.8'
