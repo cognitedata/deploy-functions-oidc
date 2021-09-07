@@ -1,5 +1,13 @@
-cdf_base_url: https://api.cognitedata.com
-# data_set_external_id: my-data-set-external-id-string
-owner: deploy-functions
-cpu: 0.25
-memory: 1.0
+cdf_project: forge-sandbox
+cdf_cluster: greenfield  # or api, westeurope-1, etc.
+deployment_client_id: d9b2bd26-2d84-4960-bbdc-ecdd9743975d
+deployment_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
+schedules_client_id: d9b2bd26-2d84-4960-bbdc-ecdd9743975d
+schedules_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
+data_set_id: 4972094093286445
+common_folder: common
+description: This function does an important job. Yes :doge:
+owner: The Awesome Forge Team
+cpu: 0.1
+memory: 0.2
+# function_file: handler.py  # <-- Not needed if using default
