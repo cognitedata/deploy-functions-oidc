@@ -1,5 +1,8 @@
-# NOT UPDATED TO OIDC, YET!
-# Cognite function template
+# The code in this repo is OIDC ready!!
+# ...but this documentation/README-file is NOT YET UPDATED!
+Yes, stop reading and head to #forge-help if stuck!
+
+## Cognite function template
 ![Deploy function](https://github.com/cognitedata/deploy-functions/workflows/Deploy%20function/badge.svg)
 
 This repository can be used as a template on how to use and deploy code/models to Cognite Functions within a CI/CD pipeline. It uses different GitHub workflows with the key component being the GitHub action [function-action](https://github.com/cognitedata/function-action).
