@@ -7,12 +7,12 @@ authors = ["hakon.treider@cognite.com"]
 [tool.poetry.dependencies]
 python = "^3.8"
 pytest-custom-exit-code = "^0.3"
-cognite-sdk = "^2.17"
+cognite-sdk = "^2.31"
 cognite-logger = "^0.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
-pre-commit = "^2.11"
+pre-commit = "^2.15"
 
 [tool.isort]
 profile = "black"

@@ -8,9 +8,9 @@ jobs:
     strategy:
       matrix:
         function:
-          # - example_function1
-          # - example_function2
-          # - example_with_logging
+          - example_function1
+          - example_function2
+          - example_with_logging
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2

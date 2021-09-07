@@ -11,8 +11,8 @@ jobs:
       matrix:
         function:
           - example_function1
-          # - example_function2
-          # - example_with_logging
+          - example_function2
+          - example_with_logging
     steps:
       - uses: actions/checkout@v2
 
@@ -58,7 +58,7 @@ jobs:
         id: extract_params
 
       - name: Deploy and schedule ${{ matrix.function }}
-        uses: cognitedata/function-action-oidc@v666
+        uses: cognitedata/function-action-oidc@v1
         with:
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
