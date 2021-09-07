@@ -18,7 +18,6 @@ jobs:
 
       - name: Extract service name
         shell: bash
-        # if branch has underscores they will be replaced with hyphens
         run: |
           echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/_/-/g)"
           echo "##[set-output name=under_name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/-/_/g)"
@@ -28,10 +27,10 @@ jobs:
         shell: bash
         env:
           BRANCH: ${{ steps.extract_name.outputs.under_name }}
-        # secret names should contain branch name with hyphens (if applicable)
+        # Secret names should contain branch name with hyphens (if applicable)
         run: |
           echo "##[set-output name=deployment_secret;]$(echo deploy_${BRANCH})"
-          echo "##[set-output name=runtime_secret;]$(echo runtime_${BRANCH})"
+          echo "##[set-output name=schedules_secret;]$(echo schedules_${BRANCH})"
           echo "##[set-output name=extra_secret;]$(echo secrets_${{ matrix.function }}_${BRANCH})"
         id: extract_secrets
 
@@ -59,15 +58,23 @@ jobs:
         id: extract_params
 
       - name: Deploy and schedule ${{ matrix.function }}
-        uses: cognitedata/function-action@v4
+        uses: cognitedata/function-action-oidc@v1
         with:
-          function_name: ${{ matrix.function }}-${{ steps.extract_name.outputs.name }}
-          cdf_runtime_credentials: ${{ secrets[steps.extract_secrets.outputs.runtime_secret] }}
-          cdf_deployment_credentials: ${{ secrets[steps.extract_secrets.outputs.deployment_secret] }}
-          cdf_base_url: ${{ steps.extract_params.outputs.cdf_base_url }}
+          # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
-          function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
+          function_external_id: ${{ matrix.function }}-${{ steps.extract_name.outputs.name }}
           schedule_file: schedules/${{ steps.extract_name.outputs.name }}.yaml
+          # Parameters we get from Github secret storage:
+          deployment_client_secret: ${{ secrets[steps.extract_secrets.outputs.deployment_secret] }}
+          schedules_client_secret: ${{ secrets[steps.extract_secrets.outputs.deployment_secret] }}
+          function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
+          # Parameters we read from the 'function_config.yaml':
+          cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
+          cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
+          deployment_client_id: ${{ steps.extract_params.outputs.deployment_client_id }}
+          deployment_tenant_id: ${{ steps.extract_params.outputs.deployment_tenant_id }}
+          schedules_client_id: ${{ steps.extract_params.outputs.schedules_client_id }}
+          schedules_tenant_id: ${{ steps.extract_params.outputs.schedules_tenant_id }}
           owner: ${{ steps.extract_params.outputs.owner }}
           cpu: ${{ steps.extract_params.outputs.cpu }}
           memory: ${{ steps.extract_params.outputs.memory }}
