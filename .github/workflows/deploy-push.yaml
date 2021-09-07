@@ -1,4 +1,4 @@
-name: Deploy Function in customer environment
+name: Deploy Function to CDF project using OIDC
 on:
   push:
     branches:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Install yq
         run: |
-            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.0/yq_linux_amd64
+            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64
             sudo chmod +x /usr/local/bin/yq
 
       - name: Extract config file parameters
@@ -58,7 +58,7 @@ jobs:
         id: extract_params
 
       - name: Deploy and schedule ${{ matrix.function }}
-        uses: cognitedata/function-action-oidc@v1
+        uses: cognitedata/function-action-oidc@v666
         with:
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
@@ -66,15 +66,17 @@ jobs:
           schedule_file: schedules/${{ steps.extract_name.outputs.name }}.yaml
           # Parameters we get from Github secret storage:
           deployment_client_secret: ${{ secrets[steps.extract_secrets.outputs.deployment_secret] }}
-          schedules_client_secret: ${{ secrets[steps.extract_secrets.outputs.deployment_secret] }}
+          schedules_client_secret: ${{ secrets[steps.extract_secrets.outputs.schedules_secret] }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
           # Parameters we read from the 'function_config.yaml':
           cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
           cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
+          data_set_id: ${{ steps.extract_params.outputs.data_set_id }}
           deployment_client_id: ${{ steps.extract_params.outputs.deployment_client_id }}
           deployment_tenant_id: ${{ steps.extract_params.outputs.deployment_tenant_id }}
           schedules_client_id: ${{ steps.extract_params.outputs.schedules_client_id }}
           schedules_tenant_id: ${{ steps.extract_params.outputs.schedules_tenant_id }}
+          description: ${{ steps.extract_params.outputs.description }}
           owner: ${{ steps.extract_params.outputs.owner }}
           cpu: ${{ steps.extract_params.outputs.cpu }}
           memory: ${{ steps.extract_params.outputs.memory }}

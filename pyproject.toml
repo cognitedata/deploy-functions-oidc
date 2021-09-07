@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "deploy-functions-oidc-template"
 version = "1.0.0"
-description = "Cognite Functions template"
+description = "Cognite Functions template for OIDC projects"
 authors = ["hakon.treider@cognite.com"]
 
 [tool.poetry.dependencies]
