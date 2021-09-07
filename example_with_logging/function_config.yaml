@@ -3,7 +3,5 @@
 # example 'cdf_project' or 'cdf_cluster'.
 cdf_project: forge-sandbox
 cdf_cluster: greenfield  # or api, westeurope-1, etc.
-deployment_client_id: 5f18d04a-2d2a-41a2-aa15-bd62a149cd14
-deployment_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
 data_set_id: 4972094093286445
-owner: The Awesome Forge Team
+owner: The Majestic Forge Team
