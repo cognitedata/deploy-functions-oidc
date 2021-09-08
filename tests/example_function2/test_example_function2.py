@@ -13,7 +13,7 @@ def test_handler__good_data(expected_input_data, cognite_client_mock):
 
 @pytest.mark.unit
 def test_handler__missing_data(missing_input_data, cognite_client_mock):
-    with pytest.raises(RuntimeError):
+    with pytest.raises(KeyError):
         handle(missing_input_data, cognite_client_mock)
 
 

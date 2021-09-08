@@ -1,5 +1,9 @@
-# NOT UPDATED TO OIDC, YET!
-# Cognite function template
+# The code in this repo is OIDC ready!!
+## ...but this documentation/README-file is NOT YET UPDATED!
+### Please don't clone this template yet.
+#### Oh you did anyway and are now stuck? Alright, come to #help-forge then.
+
+## Cognite function template
 ![Deploy function](https://github.com/cognitedata/deploy-functions/workflows/Deploy%20function/badge.svg)
 
 This repository can be used as a template on how to use and deploy code/models to Cognite Functions within a CI/CD pipeline. It uses different GitHub workflows with the key component being the GitHub action [function-action](https://github.com/cognitedata/function-action).
@@ -154,7 +158,7 @@ For more details on how to set up your workflows to deploy to Cognite Functions,
 
 There will be questions. Crowdsourcing is required.
 
-**Going to #forge-help on Slack is a good place to start!**
+**Going to #help-forge on Slack is a good place to start!**
 
 1. Q: Why is it so complicated?
    * Answer: Software is hard. Watch here for a few minutes: [link](https://www.youtube.com/watch?v=jlPaby7suOc&feature=youtu.be&t=163).
