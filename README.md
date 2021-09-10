@@ -80,8 +80,8 @@ Each workflow consists of a series of sequentially executed steps. As an input t
 
 **All client secrets *must* be stored as GitHub secrets.**
 All secrets could be classified into two orthogonal groups: by branch (deploying to different CDF projects) and by role (deploy or schedules):
-* `DEPLOY_MASTER` should contain the client secret for the service account that doing deployments on merges to the `master` branch.
-* `SCHEDULES_MASTER` should contain the client secret for the service account that will be used at runtime of the function when running on a schedule.
+* `DEPLOY_MASTER` should contain the client secret for the service account used to deploy Functions on merges to the `master` branch.
+* `SCHEDULES_MASTER` should contain the client secret for the service account used at runtime when running on a schedule.
 * **Super-pro-tip:** You can create similar `[DEPLOY|SCHEDULES]_{other-branch}` secrets to support more than one target CDF project!
 
 Adding extra secrets to specific functions:
@@ -100,11 +100,11 @@ These additional secrets require a bit of special care. You must follow these st
 ## Continuous Deployment
 
 Some customers may require you to have more than a single project. Often we have two: `development` and `production`, some customers have up to 4: `dev`, `test`, `pre-prod`, `prod`.
-In order to support that we need to have a process with formal gatekeepers and approvals. GitHub doesn't support tag protection but has a branch protection mechanisms with PRs as gatekeeping. For that purpose, `deploy-push-master.yaml` has a list of branches it triggers the action. In addition to that your function' name receives branch name as a suffix, so you can deploy them separately.
+In order to support that, we need to have a process with formal gatekeepers and approvals. GitHub doesn't support tag protection but has branch protection mechanisms with PRs as gatekeeping. For that purpose, `deploy-push-master.yaml` has a specific branch that triggers the action (this can actually be a list, but please create another workflow file for that!). In addition to that your function' name receives branch name as a suffix, so you can deploy them separately.
 
 If you want to support more than one deployment (by default we only deploy and keep the content of `master` branch) you need the following:
-1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-push-prod.yaml` if it should run on merges to the `prod` branch. You then need to modify it so that all occurences of `master` is changed to `prod`.
-1. For each function, in the `schedules` directory create yaml file matching the branch name, i.e. `prod` as in this example.
+1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-push-prod.yaml` if it should run on merges to the `prod` branch. You then need to modify it so that all occurences of `master` are changed to `prod`.
+1. For each function, in the `schedules` directory, create a yaml file matching the branch name, i.e. `prod` as in this example.
    * If the branch name has underscores like `pre_prod`, the file should be named `pre-prod.yaml`
 1. Create 1 (or 2 if using schedules) additional client secret(s) for each new environment. For example, you are adding `pre_prod`, then you need to add: `DEPLOY_PRE_PROD` and `SCHEDULES_PRE_PROD`.
 
