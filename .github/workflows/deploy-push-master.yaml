@@ -72,6 +72,7 @@ jobs:
           schedules_client_secret: ${{ secrets[steps.extract_secrets.outputs.schedules_secret] }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
           # Individual parameters per function we read from 'function_config.yaml':
+          common_folder: ${{ steps.extract_params.outputs.common_folder }}
           cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
           cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
           data_set_id: ${{ steps.extract_params.outputs.data_set_id }}
