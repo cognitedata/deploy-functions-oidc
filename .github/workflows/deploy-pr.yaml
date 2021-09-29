@@ -42,6 +42,9 @@ jobs:
       #   run: poetry install
       #   if: steps.cached-poetry-venv.outputs.cache-hit != 'true'
 
+      - name: Install poetry
+        run: poetry install
+
       - name: Test code using unit tests
         run: PYTHONPATH=${{ matrix.function }} poetry run pytest tests/${{ matrix.function }} -m "unit" --suppress-no-test-exit-code
 
