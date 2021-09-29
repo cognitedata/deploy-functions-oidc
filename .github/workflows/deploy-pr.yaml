@@ -28,22 +28,18 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           version: 1.1.10
-          # virtualenvs-create: true
-          # installer-parallel: true
+          installer-parallel: true
 
-      # - name: Load cached poetry venv
-      #   id: cached-poetry-venv
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: .venv
-      #     key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/deploy-pr.yaml') }}
-      #
-      # - name: Install (no cache)
-      #   run: poetry install
-      #   if: steps.cached-poetry-venv.outputs.cache-hit != 'true'
+      - name: Load cached poetry venv
+        id: cached-poetry-venv
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/deploy-pr.yaml') }}
 
-      - name: Install poetry
+      - name: Install dependencies using poetry (skipped on cache hit)
         run: poetry install
+        if: steps.cached-poetry-venv.outputs.cache-hit != 'true'
 
       - name: Test code using unit tests
         run: PYTHONPATH=${{ matrix.function }} poetry run pytest tests/${{ matrix.function }} -m "unit" --suppress-no-test-exit-code
