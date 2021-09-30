@@ -94,7 +94,7 @@ Example, for function folder `example_function2` to branch `master`:
 SECRETS_EXAMPLE_FUNCTION2_MASTER
 ```
 These additional secrets require a bit of special care. You must follow these steps precisely:
-[Link to secrets README](https://github.com/cognitedata/function-action#function-secrets)
+[Link to secrets README](https://github.com/cognitedata/function-action-oidc#function-secrets)
 
 
 ## Continuous Deployment
