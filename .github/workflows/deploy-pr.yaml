@@ -13,14 +13,34 @@ jobs:
           - example_with_logging
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-python@v2
         with:
           python-version: '3.8'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade poetry
-          poetry install
+      - name: Load cached $HOME/.local
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: dotlocal-${{ runner.os }}-${{ hashFiles('.github/workflows/deploy-pr.yaml') }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.1.10
+          virtualenvs-path: .venv
+          installer-parallel: true
+
+      - name: Load cached poetry venv
+        id: cached-poetry-venv
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/deploy-pr.yaml') }}
+
+      - name: Install dependencies using poetry (skipped on cache hit)
+        run: poetry install
+        if: steps.cached-poetry-venv.outputs.cache-hit != 'true'
 
       - name: Test code using unit tests
         run: PYTHONPATH=${{ matrix.function }} poetry run pytest tests/${{ matrix.function }} -m "unit" --suppress-no-test-exit-code
