@@ -1,5 +1,5 @@
 ## Cognite function template
-![Deploy function](https://github.com/cognitedata/deploy-functions/workflows/Deploy%20function/badge.svg)
+[![Deploy Function to CDF project using OIDC](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml/badge.svg)](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml)
 
 This repository can be used as a template on how to use and deploy code/models to Cognite Functions within a CI/CD pipeline using OIDC. It uses different GitHub workflows with the key component being the GitHub action [function-action-oidc](https://github.com/cognitedata/function-action-oidc).
 
@@ -67,7 +67,7 @@ $ poetry run pre-commit run --all-files
 
 ## Build and deployment
 
-The template uses GitHub Actions to perform Code quality and Deployment operations. All workflows are located in the [.github/workflows](https://github.com/cognitedata/deploy-functions/tree/master/.github/workflows) folder.
+The template uses GitHub Actions to perform Code quality and Deployment operations. All workflows are located in the [.github/workflows](https://github.com/cognitedata/deploy-functions-oidc/tree/master/.github/workflows) folder.
 * `code-quality.yaml` Runs all code-quality checks and ensures the style, linting, basic static analysis
 * `deploy-push-master.yaml` Responsible for you PR deployment to customer environment(s)
 * `deploy-pr.yaml` Responsible for running tests / verification on Pull Requests
