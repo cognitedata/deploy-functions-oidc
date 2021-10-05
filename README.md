@@ -110,7 +110,7 @@ If you want to support more than one deployment (by default we only deploy and k
 
 # How to use it
 ## Create a repository with this template
-First, click the green ["Use this template"](https://github.com/cognitedata/deploy-functions/generate) button to create a repository from this template.
+First, click the green ["Use this template"](https://github.com/cognitedata/deploy-functions-oidc/generate) button to create a repository from this template.
 
 ## Access
 Secondly, go to "Settings", "Manage access" and add `forge` team to Administrators, so we can help you faster with fewer questions.
