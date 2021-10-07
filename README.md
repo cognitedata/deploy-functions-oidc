@@ -112,7 +112,7 @@ If you want to support more than one deployment (by default we only deploy and k
 ## Create a repository with this template
 First, click the green ["Use this template"](https://github.com/cognitedata/deploy-functions-oidc/generate) button to create a repository from this template.
 
-## Access
+## [optional] Access
 Secondly, go to "Settings", "Manage access" and add `forge` team to Administrators, so we can help you faster with fewer questions.
 
 ## Getting started
@@ -135,6 +135,4 @@ For more details on how to set up your workflows to deploy to Cognite Functions,
 
 # I have a question
 
-There will be questions. Crowdsourcing is required.
-
-**Going to #help-forge on Slack is a good place to start!**
+There will be questions. Crowdsourcing is required. Use issues, or if you are an internal Cognite employee, you can also hit us up on slack on #help-forge
