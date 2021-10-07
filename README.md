@@ -135,4 +135,4 @@ For more details on how to set up your workflows to deploy to Cognite Functions,
 
 # I have a question
 
-There will be questions. Crowdsourcing is required. Use issues, or if you are an internal Cognite employee, you can also hit us up on slack on #help-forge 
+There will be questions. Crowdsourcing is required. Use issues, or if you are an internal Cognite employee, you can also hit us up on slack on #help-forge
