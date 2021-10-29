@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - add-new-action-params
 jobs:
   deploy:
     name: Deploy to Cognite Functions
@@ -26,7 +27,7 @@ jobs:
       - name: Resolve secrets
         shell: bash
         env:
-          BRANCH: ${{ steps.extract_name.outputs.under_name }}
+          BRANCH: master # ${{ steps.extract_name.outputs.under_name }}
         # Secret names should contain branch name with hyphens (if applicable)
         run: |
           echo "##[set-output name=deployment_secret;]$(echo deploy_${BRANCH})"
