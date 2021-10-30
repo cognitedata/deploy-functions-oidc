@@ -1,3 +1,6 @@
+# Note: Parameters can be hardcoded directly in 'deploy-push.yaml'
+# if you do not need to vary them between your functions, for
+# example 'cdf_project' or 'cdf_cluster'.
 cdf_project: forge-sandbox
 cdf_cluster: greenfield  # or api, westeurope-1, etc.
 schedules_client_id: d9b2bd26-2d84-4960-bbdc-ecdd9743975d
@@ -8,3 +11,7 @@ description: "This function does an important job. Yes :doge:"
 owner: The Wicked Forge Team
 cpu: 0.15
 memory: 0.25
+# Parameters that are usually not needed to pass (they have good default values):
+# function_file: handler.py  # Use case: Just don't...
+# function_deploy_timeout: 1500  # Use case: CDF on Azure has slower deployment speed.
+# post_deploy_cleanup: false  # Use case: You want to keep the uploaded zipped code files.
