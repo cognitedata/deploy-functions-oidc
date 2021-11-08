@@ -63,6 +63,8 @@ jobs:
           # Parameters you may likely hardcode here directly:
           deployment_client_id: 5f18d04a-2d2a-41a2-aa15-bd62a149cd14
           deployment_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
+          cdf_project: forge-sandbox
+          cdf_cluster: greenfield  # or api, westeurope-1, etc.
           data_set_id: "4972094093286445"
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
@@ -74,8 +76,6 @@ jobs:
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
           # Individual parameters per function we read from 'function_config.yaml':
           common_folder: ${{ steps.extract_params.outputs.common_folder }}
-          cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
-          cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
           function_deploy_timeout: ${{ steps.extract_params.outputs.function_deploy_timeout }}
           post_deploy_cleanup: ${{ steps.extract_params.outputs.post_deploy_cleanup }}
           schedules_client_id: ${{ steps.extract_params.outputs.schedules_client_id }}
