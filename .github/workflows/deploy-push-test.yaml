@@ -63,7 +63,7 @@ jobs:
           # Parameters you may likely hardcode here directly:
           deployment_client_id: 5f18d04a-2d2a-41a2-aa15-bd62a149cd14
           deployment_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
-          data_set_id: 7289494538225428
+          data_set_id: "7289494538225428"
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
           function_external_id: ${{ matrix.function }}-${{ steps.extract_name.outputs.name }}
