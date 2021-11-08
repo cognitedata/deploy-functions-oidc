@@ -1,7 +1,3 @@
 # Note: Parameters can be hardcoded directly in 'deploy-push.yaml'
-# if you do not need to vary them between your functions, for
-# example 'cdf_project' or 'cdf_cluster'.
-cdf_project: forge-sandbox
-cdf_cluster: greenfield  # or api, westeurope-1, etc.
-data_set_id: 4972094093286445
+# if you do not need to vary them between your functions!
 owner: The Majestic Forge Team
