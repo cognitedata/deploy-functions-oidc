@@ -3,5 +3,4 @@
 # example 'cdf_project' or 'cdf_cluster'.
 cdf_project: forge-sandbox
 cdf_cluster: greenfield  # or api, westeurope-1, etc.
-data_set_id: 4972094093286445
 owner: The Majestic Forge Team
