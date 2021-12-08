@@ -82,6 +82,4 @@ jobs:
           schedules_tenant_id: ${{ steps.extract_params.outputs.schedules_tenant_id }}
           description: ${{ steps.extract_params.outputs.description }}
           owner: ${{ steps.extract_params.outputs.owner }}
-          cpu: ${{ steps.extract_params.outputs.cpu }}
-          memory: ${{ steps.extract_params.outputs.memory }}
           env_vars: ${{ steps.extract_params.outputs.env_vars }}
