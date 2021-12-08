@@ -7,6 +7,7 @@ description: "This function does an important job. Yes :doge:"
 owner: The Wicked Forge Team
 cpu: 0.15
 memory: 0.25
+env_vars: {"MY_ENV_VAR": "1337", "which_env": "p-p-p-production"}
 # Parameters that are usually not needed to pass (they have good default values):
 # function_file: handler.py  # Use case: Just don't...
 # function_deploy_timeout: 1500  # Use case: CDF on Azure has slower deployment speed.
