@@ -41,7 +41,7 @@ The first function, `example_function1`, implements a basic echo capability and 
 
 ## Tests
 
-You can find the corresponding folder in `tests`, tagget with `unit` for each function.
+You can find the corresponding folder in `tests`, tagged with `unit` for each function.
 Unit tests are supposed to validate the behaviour of your `handle` function, without the need for actual deployment. Good coverage of tests will speed up your deployment and ensure that your logic behaves as expected if someone decides to make any change.
 
 * Each test folder for function contains `conftest.py` with predefined fixtures and helpers to accelerate your test development.
@@ -52,6 +52,12 @@ Unit tests are supposed to validate the behaviour of your `handle` function, wit
 To run all unit tests for the function `example_function2` locally, execute the following command in your terminal:
 ```
 $ PYTHONPATH=example_function2 poetry run pytest tests/example_function2 -m "unit"
+```
+
+## Run code locally
+To run code locally, you may create a `run_locally.py` file to handle the creation of the Cognite client (and potentially `data`/`secrets` etc.) before passing that/those into your `handle` function that you simply import (like any other function). You (probably) also need to set the `PYTHONPATH` environment variable to the root directory you are running from (this is mostly to make sure the `common_folder` works as expected!):
+```
+$ PYTHONPATH=. poetry run python example_function2/run_locally.py
 ```
 
 ## Code quality and style check
