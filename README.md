@@ -102,6 +102,10 @@ SECRETS_EXAMPLE_FUNCTION2_MASTER
 These additional secrets require a bit of special care. You must follow these steps precisely:
 [Link to secrets README](https://github.com/cognitedata/function-action-oidc#function-secrets)
 
+### Why is this secret stuff so complicated?
+The short answer is: because GitHub asks us to:
+> To help ensure that GitHub redacts your secret in logs, avoid using structured data as the values of secrets. For example, avoid creating secrets that contain JSON or encoded Git blobs.
+https://docs.github.com/en/actions/reference/encrypted-secrets
 
 ## Continuous Deployment
 
