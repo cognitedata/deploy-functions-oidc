@@ -12,7 +12,6 @@ jobs:
         function:
           - example_function1
           - example_function2
-          - example_with_logging
     steps:
       - uses: actions/checkout@v2
 
