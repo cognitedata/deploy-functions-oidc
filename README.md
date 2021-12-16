@@ -31,9 +31,9 @@ As of September 8, 2021 these are the required steps to use Cognite Functions wi
 
 ## Functions
 
-Here you can find three simple functions implemented: `example_function1`, `example_function2` and `example_with_logging`.
+Here you can find two simple functions implemented: `example_function1` and `example_function2`.
 
-The first function, `example_function1`, implements a basic echo capability and prints and sends back any content it receives. The second, `example_function2` implements an "A+B problem" solver and has expectations for the `data` it receives, which then might raise an exception. The last example just shows how you can use the `logging` module in Python without causing problems with Functions.
+The first function, `example_function1`, implements a basic echo capability and prints and sends back any content it receives. The second, `example_function2` implements an "A+B problem" solver and has expectations for the `data` it receives, which then might raise an exception.
 
 * Each function' folder contains `requirements.txt`. You can use that file to add extra dependencies that your code is depending on. By default you have a newer version of `cognite-sdk` installed, but it doesn't hurt to be specific here!
 * Each function's folder contains a `schedules` folder where you can put your files that define your schedules. By default we have added a file here called `master.yaml` which will be used whenever you merge a PR to `master` (read more in the "deployment" section). If you don't need any schedules for a specific function, just delete it!
