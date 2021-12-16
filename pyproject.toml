@@ -1,14 +1,13 @@
 [tool.poetry]
 name = "deploy-functions-oidc-template"
-version = "1.0.0"
+version = "1.1.0"
 description = "Cognite Functions template for OIDC projects"
 authors = ["hakon.treider@cognite.com"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pytest-custom-exit-code = "^0.3"
-cognite-sdk = "^2.32"
-cognite-logger = "^0.5"
+pytest-custom-exit-code = "^0, >=0.3"
+cognite-sdk = "^2.38"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
