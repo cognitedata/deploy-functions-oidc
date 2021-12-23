@@ -33,8 +33,8 @@ As of September 8, 2021 these are the required steps to use Cognite Functions wi
 
 Here you can find two simple functions implemented: `example_function1` and `example_function2`.
 
-The first function, `example_function1`, implements a basic echo capability and prints and sends back any content it receives. 
-The second, `example_function2` implements an "A+B problem" solver and has expectations for the `data` it receives, 
+The first function, `example_function1`, implements a basic echo capability and prints and sends back any content it receives.
+The second, `example_function2` implements an "A+B problem" solver and has expectations for the `data` it receives,
 which then might raise an exception.
 
 Generally a function, named `my_cognite_function` in the example below, consists of the following files:
@@ -51,9 +51,9 @@ Generally a function, named `my_cognite_function` in the example below, consists
 <details>
 <summary>schedules/master.yaml</summary>
 
-Each function's folder contains a `schedules` folder where you can put your files that define your 
-schedules. By default, we have added a file here called `master.yaml` which will be used whenever 
-you merge a PR to `master` (read more in the "deployment" section). If you don't need any schedules 
+Each function's folder contains a `schedules` folder where you can put your files that define your
+schedules. By default, we have added a file here called `master.yaml` which will be used whenever
+you merge a PR to `master` (read more in the "deployment" section). If you don't need any schedules
 for a specific function, just delete it!
 
 Example
@@ -70,8 +70,8 @@ Example
 <details>
 <summary>function_config.yaml</summary>
 
-Each function's folder contains a `function_config.yaml` file where you can specify most 
-configuration parameters (per function). These parameters are extracted and used by the Github 
+Each function's folder contains a `function_config.yaml` file where you can specify most
+configuration parameters (per function). These parameters are extracted and used by the Github
 Workflow files during deployment (read more in the "build and deployment" section).
 
 Example template, see [function details](https://github.com/cognitedata/function-action-oidc#function-metadata-in-github-workflow) for description of all configuration parameters.
@@ -87,7 +87,7 @@ owner: data.liberator@cognite.com
 <details>
 <summary>handler.py</summary>
 
-Example below, for a full description of the arguments that can be passed to this function see 
+Example below, for a full description of the arguments that can be passed to this function see
 [cognite-experimental-sdk](https://cognite-sdk-experimental.readthedocs-hosted.com/en/latest/cognite.html#create-function).
 
 ```python
@@ -104,8 +104,8 @@ def handle(data, client, secrets, function_call_info):
 <details>
 <summary>requirements.txt</summary>
 
-Each function's folder contains `requirements.txt`. You can use that file to add extra dependencies 
-that your code is depending on. By default, you have a newer version of `cognite-sdk` installed, 
+Each function's folder contains `requirements.txt`. You can use that file to add extra dependencies
+that your code is depending on. By default, you have a newer version of `cognite-sdk` installed,
 but it doesn't hurt to be specific here!
 
 Example ``requirements.txt`` file
@@ -124,12 +124,12 @@ by running the following command inside your private package root directory
 poetry build
 ```
 
-This builds a wheel and source for your private package inside a ``dist`` directory. Copy the 
+This builds a wheel and source for your private package inside a ``dist`` directory. Copy the
 ``*.whl`` and put it inside your function folder.
 
 Finally, you specify the dependency as shown above ``function/my_private_package-1.3.1-py3-none-any.whl``.
-Note that ``function/`` is **not** a placeholder. For more information about wheels see 
-[What Are Python Wheels and Why Should You Care?](https://realpython.com/python-wheels/) 
+Note that ``function/`` is **not** a placeholder. For more information about wheels see
+[What Are Python Wheels and Why Should You Care?](https://realpython.com/python-wheels/)
 
 
 
@@ -138,7 +138,7 @@ Note that ``function/`` is **not** a placeholder. For more information about whe
 
 ```bash
 poetry export -f requirements.txt --output requirements.txt --without-hashes
-``` 
+```
 
 </details>
 
