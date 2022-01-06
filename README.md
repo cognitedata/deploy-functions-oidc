@@ -42,7 +42,7 @@ Generally a function, named `my_cognite_function` in the example below, consists
 📦my_cognite_function
  ┣ 📂schedules
  ┃ ┗ 📜master.yaml - (Optional) Schedule if you want to execute the function on a schedule.
- ┣ 📜__init__.py - Empty file (required to make the function into a module)
+ ┣ 📜__init__.py - Empty file (required to make the function into a package)
  ┣ 📜function_config.yaml - Configuration for the function
  ┣ 📜handler.py - Module with script inside a handle function
  ┗ 📜requirements.txt - Explicitly states the dependencies needed to run the handler.py script.
@@ -85,7 +85,7 @@ owner: data.liberator@cognite.com
 
 
 <details>
-<summary>handler.py</summary>
+<summary>`handler.py`</summary>
 
 Example below, for a full description of the arguments that can be passed to this function see
 [cognite-experimental-sdk](https://cognite-sdk-experimental.readthedocs-hosted.com/en/latest/cognite.html#create-function).
