@@ -31,13 +31,117 @@ As of September 8, 2021 these are the required steps to use Cognite Functions wi
 
 ## Functions
 
-Here you can find three simple functions implemented: `example_function1`, `example_function2` and `example_with_logging`.
+Here you can find two simple functions implemented: `example_function1` and `example_function2`.
 
-The first function, `example_function1`, implements a basic echo capability and prints and sends back any content it receives. The second, `example_function2` implements an "A+B problem" solver and has expectations for the `data` it receives, which then might raise an exception. The last example just shows how you can use the `logging` module in Python without causing problems with Functions.
+The first function, `example_function1`, implements a basic echo capability and prints and sends back any content it receives.
+The second, `example_function2` implements an "A+B problem" solver and has expectations for the `data` it receives,
+which then might raise an exception.
 
-* Each function' folder contains `requirements.txt`. You can use that file to add extra dependencies that your code is depending on. By default you have a newer version of `cognite-sdk` installed, but it doesn't hurt to be specific here!
-* Each function's folder contains a `schedules` folder where you can put your files that define your schedules. By default we have added a file here called `master.yaml` which will be used whenever you merge a PR to `master` (read more in the "deployment" section). If you don't need any schedules for a specific function, just delete it!
-* Each function's folder contains a `function_config.yaml` file where you can specify most configuration parameters (per function). These parameters are extracted and used by the Github Workflow files during deployment (read more in the "build and deployment" section).
+Generally a function, named `my_cognite_function` in the example below, consists of the following files:
+```
+📦my_cognite_function
+ ┣ 📂schedules
+ ┃ ┗ 📜master.yaml - (Optional) Schedule if you want to execute the function on a schedule.
+ ┣ 📜__init__.py - Empty file (required to make the function into a package)
+ ┣ 📜function_config.yaml - Configuration for the function
+ ┣ 📜handler.py - Module with script inside a handle function
+ ┗ 📜requirements.txt - Explicitly states the dependencies needed to run the handler.py script.
+```
+
+<details>
+<summary>schedules/master.yaml</summary>
+
+Each function's folder contains a `schedules` folder where you can put your files that define your
+schedules. By default, we have added a file here called `master.yaml` which will be used whenever
+you merge a PR to `master` (read more in the "deployment" section). If you don't need any schedules
+for a specific function, just delete it!
+
+Example
+```yaml
+- name: My daily schedule
+  cron: "0 0 * * *"
+  data:
+    lovely-parameter: True
+    greeting: "World"
+```
+
+</details>
+
+<details>
+<summary>function_config.yaml</summary>
+
+Each function's folder contains a `function_config.yaml` file where you can specify most
+configuration parameters (per function). These parameters are extracted and used by the Github
+Workflow files during deployment (read more in the "build and deployment" section).
+
+Example template, see [function details](https://github.com/cognitedata/function-action-oidc#function-metadata-in-github-workflow) for description of all configuration parameters.
+
+```yaml
+description: "Analysis performed by my_cognite_function"
+owner: data.liberator@cognite.com
+```
+
+</details>
+
+
+<details>
+<summary>`handler.py`</summary>
+
+Example below, for a full description of the arguments that can be passed to this function see
+[cognite-experimental-sdk](https://cognite-sdk-experimental.readthedocs-hosted.com/en/latest/cognite.html#create-function).
+
+```python
+def handle(data, client, secrets, function_call_info):
+    print(f"Hello from {__name__}!")
+    print("I got the following data:")
+    print(data)
+    print("Will now return data")
+    return data
+```
+
+</details>
+
+<details>
+<summary>requirements.txt</summary>
+
+Each function's folder contains `requirements.txt`. You can use that file to add extra dependencies
+that your code is depending on. By default, you have a newer version of `cognite-sdk` installed,
+but it doesn't hurt to be specific here!
+
+Example ``requirements.txt`` file
+
+```text
+cognite-sdk==2.38.2
+function/my_private_package-1.3.1-py3-none-any.whl
+python-dotenv==0.19.2
+```
+
+**Private Dependencies**: You can include private packages (dependencies which are not published
+to PyPi.org) by building and adding the wheel to the function folder. You can build a wheel
+by running the following command inside your private package root directory
+
+```
+poetry build
+```
+
+This builds a wheel and source for your private package inside a ``dist`` directory. Copy the
+``*.whl`` and put it inside your function folder.
+
+Finally, you specify the dependency as shown above ``function/my_private_package-1.3.1-py3-none-any.whl``.
+Note that ``function/`` is **not** a placeholder. For more information about wheels see
+[What Are Python Wheels and Why Should You Care?](https://realpython.com/python-wheels/)
+
+
+
+**Caveat**: If you create the ``requirements.txt`` by using poetry, you must set the option
+``--without-hashes`` as Azure does not support hashes in the ``requirements.txt`` file.
+
+```bash
+poetry export -f requirements.txt --output requirements.txt --without-hashes
+```
+
+</details>
+
 
 ## Tests
 
@@ -102,6 +206,10 @@ SECRETS_EXAMPLE_FUNCTION2_MASTER
 These additional secrets require a bit of special care. You must follow these steps precisely:
 [Link to secrets README](https://github.com/cognitedata/function-action-oidc#function-secrets)
 
+### Why is this secret stuff so complicated?
+The short answer is: because GitHub asks us to:
+> To help ensure that GitHub redacts your secret in logs, avoid using structured data as the values of secrets. For example, avoid creating secrets that contain JSON or encoded Git blobs.
+https://docs.github.com/en/actions/reference/encrypted-secrets
 
 ## Continuous Deployment
 

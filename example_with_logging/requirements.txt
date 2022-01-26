@@ -1,1 +1,0 @@
-cognite-logger>=0.5
