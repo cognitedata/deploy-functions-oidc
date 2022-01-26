@@ -75,7 +75,7 @@ jobs:
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secret] }}
           # Individual parameters per function we read from 'function_config.yaml':
           common_folder: ${{ steps.extract_params.outputs.common_folder }}
-          function_deploy_timeout: ${{ steps.extract_params.outputs.function_deploy_timeout }}
+          function_deploy_timeout: 5000
           post_deploy_cleanup: ${{ steps.extract_params.outputs.post_deploy_cleanup }}
           schedules_client_id: ${{ steps.extract_params.outputs.schedules_client_id }}
           schedules_tenant_id: ${{ steps.extract_params.outputs.schedules_tenant_id }}
