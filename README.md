@@ -116,6 +116,13 @@ function/my_private_package-1.3.1-py3-none-any.whl
 python-dotenv==0.19.2
 ```
 
+The file update_requirements.sh is a script to automatically sync the requirements.txt files with the poetry environement. Modify the directoriy names with cognite functions from `example_function1` and `example_function2` to fit your directory names and run the shell script:
+
+```shell
+sh update_requirements.sh
+
+```
+
 **Private Dependencies**: You can include private packages (dependencies which are not published
 to PyPi.org) by building and adding the wheel to the function folder. You can build a wheel
 by running the following command inside your private package root directory
