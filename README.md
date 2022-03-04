@@ -50,7 +50,7 @@ Generally a function, named `my_cognite_function` in the example below, consists
 ```
 
 <details>
-<summary>schedules/master.yaml</summary>
+<summary><code>schedules/master.yaml</code></summary>
 
 Each function's folder contains a `schedules` folder where you can put your files that define your
 schedules. By default, we have added a file here called `master.yaml` which will be used whenever
@@ -69,7 +69,7 @@ Example
 </details>
 
 <details>
-<summary>function_config.yaml</summary>
+<summary><code>function_config.yaml</code></summary>
 
 Each function's folder contains a `function_config.yaml` file where you can specify most
 configuration parameters (per function). These parameters are extracted and used by the Github
@@ -86,7 +86,7 @@ owner: data.liberator@cognite.com
 
 
 <details>
-<summary>`handler.py`</summary>
+<summary><code>handler.py</code></summary>
 
 Example below, for a full description of the arguments that can be passed to this function see
 [cognite-experimental-sdk](https://cognite-sdk-experimental.readthedocs-hosted.com/en/latest/cognite.html#create-function).
@@ -103,7 +103,7 @@ def handle(data, client, secrets, function_call_info):
 </details>
 
 <details>
-<summary>requirements.txt</summary>
+<summary><code>requirements.txt</code></summary>
 
 Each function's folder contains `requirements.txt`. You can use that file to add extra dependencies
 that your code is depending on. By default, you have a newer version of `cognite-sdk` installed,
