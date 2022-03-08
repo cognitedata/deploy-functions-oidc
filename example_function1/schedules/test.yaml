@@ -1,0 +1,5 @@
+- name: My daily schedule
+  cron: "0 0 * * *"
+  data:
+    lovely-parameter: True
+    greeting: "World"
