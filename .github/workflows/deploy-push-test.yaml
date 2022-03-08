@@ -65,6 +65,7 @@ jobs:
           cdf_project: az-forge-sandbox
           cdf_cluster: bluefield  # or api, westeurope-1, etc.
           data_set_id: "7289494538225428"
+          runtime: py39
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
           function_external_id: ${{ matrix.function }}-${{ steps.extract_name.outputs.name }}

@@ -15,8 +15,9 @@ As of September 8, 2021 these are the required steps to use Cognite Functions wi
         - `Files:READ` and `Files:WRITE` in `scope: all` OR scoped to a data set (recommended, but then you also need dataset capabilities like `Datasets:READ` - and if it is write protected, `Datasets:OWNER` as well!)
         - `Projects:LIST` in `scope: all`
         - `Groups:LIST` in `scope: all` OR scoped to "current user" (i.e. list its own groups)
-    - And a *special capability* for the group that your sessions service principal is part of:
+    - The schedule service principal needs a *special capability*:
         - `Sessions:CREATE` in `scope: all`
+        - And all other capabilites needed to run the function
         - ...but **don't worry** too much about making sure all of these are 100 % correct: the action used by this template, namely the `function-action-oidc`, will list all missing capabilities for you! 🙌
 1. Get Functions whitelisted for your project, *if it is not already*.
    * How? Patch [this file](https://github.com/cognitedata/context-api/blob/master/src/api/functions/whitelist.py) with the name of the CDF project. Make sure that you add it to the list for the *correct cluster*, e.g.:
@@ -49,7 +50,7 @@ Generally a function, named `my_cognite_function` in the example below, consists
 ```
 
 <details>
-<summary>schedules/master.yaml</summary>
+<summary><code>schedules/master.yaml</code></summary>
 
 Each function's folder contains a `schedules` folder where you can put your files that define your
 schedules. By default, we have added a file here called `master.yaml` which will be used whenever
@@ -68,7 +69,7 @@ Example
 </details>
 
 <details>
-<summary>function_config.yaml</summary>
+<summary><code>function_config.yaml</code></summary>
 
 Each function's folder contains a `function_config.yaml` file where you can specify most
 configuration parameters (per function). These parameters are extracted and used by the Github
@@ -85,7 +86,7 @@ owner: data.liberator@cognite.com
 
 
 <details>
-<summary>`handler.py`</summary>
+<summary><code>handler.py</code></summary>
 
 Example below, for a full description of the arguments that can be passed to this function see
 [cognite-experimental-sdk](https://cognite-sdk-experimental.readthedocs-hosted.com/en/latest/cognite.html#create-function).
@@ -102,7 +103,7 @@ def handle(data, client, secrets, function_call_info):
 </details>
 
 <details>
-<summary>requirements.txt</summary>
+<summary><code>requirements.txt</code></summary>
 
 Each function's folder contains `requirements.txt`. You can use that file to add extra dependencies
 that your code is depending on. By default, you have a newer version of `cognite-sdk` installed,
