@@ -1,6 +1,8 @@
 ## Cognite function template
 [![Deploy Function to CDF project using OIDC](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml/badge.svg)](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml)
 
+### NB: Due to how we have to deploy code, [running locally](https://github.com/cognitedata/deploy-functions-oidc#run-code-locally) requires an extra step. Please read it!
+
 This repository can be used as a template on how to use and deploy code/models to Cognite Functions within a CI/CD pipeline using OIDC. It uses different GitHub workflows with the key component being the GitHub action [function-action-oidc](https://github.com/cognitedata/function-action-oidc).
 
  # Prerequisites
