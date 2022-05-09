@@ -22,7 +22,7 @@ As of September 8, 2021 these are the required steps to use Cognite Functions wi
         - And all other capabilites needed to run the function
         - ...but **don't worry** too much about making sure all of these are 100 % correct: the action used by this template, namely the `function-action-oidc`, will list all missing capabilities for you! 🙌
 1. Get Functions whitelisted for your project, *if it is not already*.
-   * How? Patch [this file](https://github.com/cognitedata/context-api/blob/master/src/api/functions/whitelist.py) with the name of the CDF project. Make sure that you add it to the list for the *correct cluster*, e.g.:
+   * How? Patch [this file](https://github.com/cognitedata/context-api/blob/master/src/utils/functions_whitelist.py) with the name of the CDF project. Make sure that you add it to the list for the *correct cluster*, e.g.:
         1. `https://api.cognitedata.com`
         2. `https://greenfield.cognitedata.com`
         3. `https://statnett.cognitedata.com`
