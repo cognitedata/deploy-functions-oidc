@@ -15,7 +15,7 @@ pre-commit = "^2.15"
 
 [tool.isort]
 profile = "black"
-force_single_line = true
+force_single_line = false
 atomic = true
 lines_after_imports = 2
 lines_between_types = 1
