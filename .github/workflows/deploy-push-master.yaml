@@ -35,7 +35,7 @@ jobs:
 
       - name: Install yq
         run: |
-            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64
+            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64
             sudo chmod +x /usr/local/bin/yq
 
       - name: Extract config file parameters
@@ -45,13 +45,11 @@ jobs:
           if [ ! -f $FILE ]; then
               echo "Config: $FILE not supplied!"
           else
-              ALLKEYS=$(yq e "... comments=\"\" | keys" $FILE)
+              ALLKEYS=$(yq -o=tsv "keys" $FILE)
               for CONFIGURATION in $ALLKEYS
               do
-                if [ "$CONFIGURATION" != "-" ]; then
-                    VALUE=$(yq e ".$CONFIGURATION" $FILE)
-                    echo ::set-output name=$CONFIGURATION::$VALUE
-                fi
+                  VALUE=$(yq -o=json -I=0 ".$CONFIGURATION" $FILE)
+                  echo ::set-output name=$CONFIGURATION::$VALUE
               done
           fi
         id: extract_params
@@ -85,3 +83,4 @@ jobs:
           cpu: ${{ steps.extract_params.outputs.cpu }}
           memory: ${{ steps.extract_params.outputs.memory }}
           env_vars: ${{ steps.extract_params.outputs.env_vars }}
+          metadata: ${{ steps.extract_params.outputs.metadata }}
