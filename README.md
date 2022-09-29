@@ -74,6 +74,8 @@ Example template, see [function details](https://github.com/cognitedata/function
 ```yaml
 description: "Analysis performed by my_cognite_function"
 owner: data.liberator@cognite.com
+metadata:
+  version: "1.0.0"
 ```
 
 </details>
