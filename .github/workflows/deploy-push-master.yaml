@@ -42,14 +42,13 @@ jobs:
         shell: bash
         run: |
           FILE="${{ matrix.function }}/function_config.yaml"
-          CLEANUP_SCRIPT='import sys;sys.stdout.write(sys.stdin.read().strip(" \r\n\""))'
           if [ ! -f $FILE ]; then
               echo "Config: $FILE not supplied!"
           else
               ALLKEYS=$(yq -o=tsv "keys" $FILE)
               for CONFIGURATION in $ALLKEYS
               do
-                  VALUE=$(yq -o=json -I=0 ".$CONFIGURATION" $FILE | python -c "$CLEANUP_SCRIPT")
+                  VALUE=$(yq -o=json -I=0 ".$CONFIGURATION" $FILE | sed -e 's/^"//' -e 's/"$//')
                   echo ::set-output name=$CONFIGURATION::$VALUE
               done
           fi
