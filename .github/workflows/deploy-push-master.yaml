@@ -13,13 +13,15 @@ jobs:
           - example_function1
           - example_function2
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
       - name: Extract service name
         shell: bash
         run: |
-          echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/_/-/g)"
-          echo "##[set-output name=under_name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/-/_/g)"
+          name=$(echo ${GITHUB_REF#refs/heads/} | sed -e s/_/-/g)
+          under_name=$(echo ${GITHUB_REF#refs/heads/} | sed -e s/-/_/g)
+          echo "name=${name}" >> $GITHUB_OUTPUT
+          echo "under_name=${under_name}" >> $GITHUB_OUTPUT
         id: extract_name
 
       - name: Resolve secrets
@@ -28,9 +30,9 @@ jobs:
           BRANCH: ${{ steps.extract_name.outputs.under_name }}
         # Secret names should contain branch name with hyphens (if applicable)
         run: |
-          echo "##[set-output name=deployment_secret;]$(echo deploy_${BRANCH})"
-          echo "##[set-output name=schedules_secret;]$(echo schedules_${BRANCH})"
-          echo "##[set-output name=extra_secret;]$(echo secrets_${{ matrix.function }}_${BRANCH})"
+          echo "deployment_secret=deploy_${BRANCH}" >> $GITHUB_OUTPUT
+          echo "schedules_secret=schedules_${BRANCH}" >> $GITHUB_OUTPUT
+          echo "extra_secret=secrets_${{ matrix.function }}_${BRANCH}" >> $GITHUB_OUTPUT
         id: extract_secrets
 
       - name: Install yq
@@ -49,7 +51,7 @@ jobs:
               for CONFIGURATION in $ALLKEYS
               do
                   VALUE=$(yq -o=json -I=0 ".$CONFIGURATION" $FILE | sed -e 's/^"//' -e 's/"$//')
-                  echo ::set-output name=$CONFIGURATION::$VALUE
+                  echo "${CONFIGURATION}=${VALUE}" >> $GITHUB_OUTPUT
               done
           fi
         id: extract_params
