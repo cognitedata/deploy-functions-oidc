@@ -179,27 +179,30 @@ The template uses GitHub Actions to perform Code quality and Deployment operatio
 * `deploy-push-master.yaml` Responsible for your PR deployment to customer environment(s)
 * `deploy-pr.yaml` Responsible for running tests / verification on Pull Requests
 
-The functions to be deployed are defined in the workflow yaml using the `env.deploy_folders` array variable. Functions are only deployed if the pushed changes modified any files inside the function folder. In case you only modify code outside the function folders, such as tests, then the deployment won't run.
+The functions to be deployed are defined in the workflow yaml using the `deploy_folders` array variable for the `generate-matrix` workflow. Functions are only deployed if the pushed changes modified any files inside the function folder. In case you only modify code outside the function folders, such as tests, then the deployment won't run.
 
-In addition, `env.trigger_deploy_all_folders` is an optional array variable that specifies the folders with common dependencies. If specified then updates to the files in those folders will trigger deployment of all the functions in `env.deploy_folders`.
+In addition, `trigger_deploy_all_folders` is an optional array variable that specifies the folders with common dependencies. If specified then updates to the files in those folders will trigger deployment of all the functions in `deploy_folders`.
 
-**Note**: the env variables are defined as bash arrays and the shown syntax including indentation is required.
+**Note**: the input variables are defined as bash arrays and the shown syntax including indentation is required.
 ```yaml
 name: Deploy Function to CDF project using OIDC
 on:
   push:
     branches:
       - master
-env:
-  deploy_folders: >-
-    (
-    "example_function1"
-    "example_function2"
-    )
-  trigger_deploy_all_folders: >-
-    (
-    "common"
-    )
+jobs:
+  generate-matrix:
+    uses: "./.github/workflows/generate-matrix.yaml"
+    with:
+      deploy_folders: >-
+        (
+        "example_function1"
+        "example_function2"
+        )
+      trigger_deploy_all_folders: >-
+        (
+        "common"
+        )
 ```
 
 Each workflow consists of a series of sequentially executed steps. As an input to the workflows, you will need to provide parameters per each function in `function_config.yaml`.
@@ -262,9 +265,9 @@ Secondly, go to "Settings", "Manage access" and add `forge` team to Administrato
 * Go into `Settings` in your repository to create the secrets. You need the client secrets you created as part of the prerequisites. Add them!
 
 Once you have modified the functions and added secrets, modify the files in `.github/workflows`. These are the things you will have to modify:
-* List of functions (`env.deploy_folders)
+* List of functions (`deploy_folders` input to `generate-matrix`)
   * Only the function folders listed in the workflow file(s) will be deployed. You therefore must keep it updated with any changes to the folder names.
-* Optionally, `env.trigger_deploy_all_folders`
+* Optionally, `trigger_deploy_all_folders`
 
 Refer to [Build and deployment](#build-and-deployment) section for explanation of the workflow variables.
 
