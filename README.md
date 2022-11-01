@@ -36,19 +36,23 @@ Generally a function, named `my_cognite_function` in the example below, consists
 ```
 📦my_cognite_function
  ┣ 📂schedules
- ┃ ┗ 📜master.yaml - (Optional) Schedule if you want to execute the function on a schedule.
+ ┃ ┗ 📜dev.yaml - (Optional) Schedule for dev environment if you want to execute the function on a schedule.
  ┣ 📜__init__.py - Empty file (required to make the function into a package)
  ┣ 📜function_config.yaml - Configuration for the function
+ ┣ 📜function_config_test.yaml - Configuration for the function specific for dev environment
  ┣ 📜handler.py - Module with script inside a handle function
  ┗ 📜requirements.txt - Explicitly states the dependencies needed to run the handler.py script.
 ```
+
+Additionally under common there can be common functions configuration for each environment named `function_config_{environment}` applying to all functions. 
+The configured elements will be overridden by configuration in function specific configuration files.
 
 <details>
 <summary><code>schedules/master.yaml</code></summary>
 
 Each function's folder contains a `schedules` folder where you can put your files that define your
-schedules. By default, we have added a file here called `master.yaml` which will be used whenever
-you merge a PR to `master` (read more in the "deployment" section). If you don't need any schedules
+schedules. The files should be named equal to the environment name .yaml. We have added a file here called `test.yaml` which will be used 
+for dev environment (read more in the "deployment" section). If you don't need any schedules
 for a specific function, just delete it!
 
 Example
@@ -80,6 +84,20 @@ metadata:
 
 </details>
 
+<details>
+<summary><code>function_config_test.yaml</code></summary>
+
+Each function's folder should additionally have a environment specific config file `function_config_{environment}.yaml` file where you can specify
+configuration parameters specific for the environment and the function. These parameters are extracted and used by the Github
+Workflow files during deployment (read more in the "build and deployment" section) and will override elements set in function_config.yaml file.
+
+Example template, see [function details](https://github.com/cognitedata/function-action-oidc#function-metadata-in-github-workflow) for description of all configuration parameters.
+
+```yaml
+data_set_id: 7289494538225428
+```
+
+</details>
 
 <details>
 <summary><code>handler.py</code></summary>
@@ -176,29 +194,31 @@ $ poetry run pre-commit run --all-files
 
 The template uses GitHub Actions to perform Code quality and Deployment operations. All workflows are located in the [.github/workflows](https://github.com/cognitedata/deploy-functions-oidc/tree/master/.github/workflows) folder.
 * `code-quality.yaml` Runs all code-quality checks and ensures the style, linting, basic static analysis
-* `deploy-push-master.yaml` Responsible for you PR deployment to customer environment(s)
+* `deploy-push.yaml` Responsible for you PR deployment to customer environment(s)
 * `deploy-pr.yaml` Responsible for running tests / verification on Pull Requests
 
 Each workflow consists of a series of sequentially executed steps. As an input to the workflows, you will need to provide parameters per each function in `function_config.yaml`.
 
-**Note**: If the `deploy-push-master.yaml` workflow fails after you have merged to `master`, you can check out the tab `Actions` in GitHub, where you will it. Here you can drill down to find the cause - and if it is unrelated to your code changes, simply do a re-run.
+**Note**: If the `deploy-push.yaml` workflow fails after you have merged to, you can check out the tab `Actions` in GitHub, where you will it. Here you can drill down to find the cause - and if it is unrelated to your code changes, simply do a re-run.
 
 ## Secrets
 
 **All client secrets *must* be stored as GitHub secrets.**
-All secrets could be classified into two orthogonal groups: by branch (deploying to different CDF projects) and by role (deploy or schedules):
-* `DEPLOY_MASTER` should contain the client secret for the service account used to deploy Functions on merges to the `master` branch.
-* `SCHEDULES_MASTER` should contain the client secret for the service account used at runtime when running on a schedule.
-* **Super-pro-tip:** You can create similar `[DEPLOY|SCHEDULES]_{other-branch}` secrets to support more than one target CDF project!
+All secrets should be organized in github environments, and the following should be defined:
+* `DEPLOYMENT_CLIENT_ID` should contain the client id (application id) for the the service account used to deploy Functions on merges..
+* `DEPLOYMENT_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
+* `SCHEDULE_CLIENT_ID` should contain the client id (application id)  for the service account used at runtime when running on a schedule.
+* `SCHEDULE_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
+* **Super-pro-tip:** By having multiple environments you can support more than one target CDF project!
 
 Adding extra secrets to specific functions:
-* In order to make secrets available to a specific function (and branch, say *master*), you need to add it as a Github Secret in your repository with a *very* specific name:
+* In order to make secrets available to a specific function and environment, you need to add it as a Github Secret in your repository with a specific name:
 ```
-SECRETS_{ your function name }_{ your branch name }
+EXTRA_SECRETS_{ your function name }
 ```
-Example, for function folder `example_function2` to branch `master`:
+Example, for function folder `example_function2`:
 ```
-SECRETS_EXAMPLE_FUNCTION2_MASTER
+EXTRA_SECRETS_example_function2
 ```
 These additional secrets require a bit of special care. You must follow these steps precisely:
 [Link to secrets README](https://github.com/cognitedata/function-action-oidc#function-secrets)
@@ -210,14 +230,19 @@ https://docs.github.com/en/actions/reference/encrypted-secrets
 
 ## Continuous Deployment
 
-Some customers may require you to have more than a single project. Often we have two: `development` and `production`, some customers have up to 4: `dev`, `test`, `pre-prod`, `prod`.
-In order to support that, we need to have a process with formal gatekeepers and approvals. GitHub doesn't support tag protection but has branch protection mechanisms with PRs as gatekeeping. For that purpose, `deploy-push-master.yaml` has a specific branch that triggers the action (this can actually be a list, but please create another workflow file for that!). In addition to that your function' name receives branch name as a suffix, so you can deploy them separately.
+Most customers will require you to have more than a single project. Often we have two: `development` and `production`, some customers have up to 4: `dev`, `test`, `pre-prod`, `prod`.
+In order to support that, we need to have a process with formal gatekeepers and approvals. GitHub doesn't support tag protection but has environment and branch protection mechanisms with PRs as gatekeeping.
 
-If you want to support more than one deployment (by default we only deploy and keep the content of `master` branch) you need the following:
-1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-push-prod.yaml` if it should run on merges to the `prod` branch. You then need to modify it so that all occurrences of `master` are changed to `prod`.
-1. For each function, in the `schedules` directory, create a yaml file matching the branch name, i.e. `prod` as in this example.
-   * If the branch name has underscores like `pre_prod`, the file should be named `pre-prod.yaml`
-1. Create 1 (or 2 if using schedules) additional client secret(s) for each new environment. For example, you are adding `pre_prod`, then you need to add: `DEPLOY_PRE_PROD` and `SCHEDULES_PRE_PROD`.
+#### Option 1- environment protection:
+In github environment settings configure environment protection rule to only allow deployment from protected branches and set reviewers required to approve running workflows on the environment. 
+
+#### Option 2- branch protection: 
+To use branch protection to control deployment it is advised to create a separate github action deploying the given branch to the environment(s) desired.
+For that purpose, `deploy-push-master.yaml` has a specific branch that triggers the action (this can actually be a list, but please create another workflow file for that!). In addition to that your function' name receives branch name as a suffix, so you can deploy them separately.
+
+If you want to support more than one deployment (by default we only deploy and keep the content of `main` branch) you need the following:
+1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-push-prod.yaml` if it should run on merges to the `prod` branch. You then need to modify it so that all occurrences of `main` are changed to `prod`.
+2. Create new github environments with required secrets.
 
 # How to use it
 ## Create a repository with this template
