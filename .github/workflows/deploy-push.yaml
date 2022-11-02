@@ -56,6 +56,13 @@ jobs:
           done
         id: extract_params
 
+      - name: Extra secrets
+        shell: bash
+        # Secret name should be EXTRA_SECRETS_{function name} (if applicable)
+        run: |
+          echo "extra_secrets_name=EXTRA_SECRETS_${{ matrix.function }}" >> $GITHUB_OUTPUT
+        id: extract_secrets
+
       - name: Deploy and schedule ${{matrix.function }}
         uses: cognitedata/function-action-oidc@v1
         with:
@@ -70,7 +77,7 @@ jobs:
           deployment_client_secret: ${{secrets.DEPLOYMENT_SECRET }}
           schedules_client_id: ${{ secrets.SCHEDULE_CLIENT_ID }}
           schedules_client_secret: ${{ secrets.SCHEDULE_SECRET }}
-          function_secrets: ${{ secrets.EXTRA_SECRETS }_${{ matrix.function }}
+          function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
           # Individual parameters per function we read from 'function_config.yaml':
           cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
           cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
