@@ -1,0 +1,96 @@
+name: Generate function deployment matrix
+
+on:
+  workflow_call:
+    inputs:
+      deploy_folders:
+        description: List of function folders to be deployed
+        type: string
+        required: true
+      trigger_deploy_all_folders:
+        description: |
+          List of folders with dependencies (e.g. common) that will
+          trigger deployment of all functions if updated.
+        type: string
+        required: false
+    outputs:
+      matrix:
+        value: ${{ jobs.generate-matrix.outputs.matrix }}
+        description:
+      folders:
+        value: ${{ jobs.generate-matrix.outputs.folders }}
+        description: |
+          a json string in the format ["function1", "function2"] - can be used as
+          strategy.matrix.function: { fromJson(needs.generate-matrix.outputs.folders) }
+      deploy_folders:
+        value: ${{ inputs.deploy_folders }}
+        description: Value of the input deploy_folders
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.make-json.outputs.matrix }}
+      folders: ${{ steps.make-json.outputs.folders }}
+    steps:
+      - id: checkout
+        uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 3
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      - name: Generate deployment matrix JSON
+        id: make-json
+        shell: bash
+        run: |
+          set -e
+          target_folders=${{ inputs.deploy_folders }}
+          changed_folders=$(git diff --name-only HEAD^ HEAD | xargs -L1 dirname | uniq)
+          #  Create a temporary file for output:
+          [ ! -d tmp ] && mkdir tmp
+          tmp_file="tmp/changed.yml"
+          echo "folder:" > $tmp_file
+          #  Check if a changed folder is part of the deployment target
+          #  folders and if so write the folder name to the temp file:
+          for folder in $changed_folders; do
+            f=$(echo ${folder#/} | cut -d '/' -f1)
+            echo "folder '$f'"
+            #  If trigger_deploy_all_folders array is set then check if any of the changed
+            #  folders is an element and if so add all target deployment folders to the temp file
+            if [ ! -z '${{ inputs.trigger_deploy_all_folders }}' ]; then
+              trigger_deploy_all_folders=${{ inputs.trigger_deploy_all_folders }}
+              for deploy_all_folder in "${trigger_deploy_all_folders[@]}"; do
+                if [ "$f" = "$deploy_all_folder" ]; then
+                  echo "> deploy all"
+                  echo "folder:" > $tmp_file
+                  for tf in "${target_folders[@]}"; do
+                    echo "  - ${tf}" >> $tmp_file
+                  done
+                  break 2
+                fi
+              done
+            fi
+            for target_folder in "${target_folders[@]}"; do
+              if [ "$f" = "$target_folder" ]; then
+                echo "> add to deploy array"
+                echo "  - ${f}" >> $tmp_file
+                break
+              fi
+            done
+          done
+          #  Create an output JSON file from the temp file if it has values
+          #  or return a default json with a "skipDeploy" value in the array
+          if [ $(cat $tmp_file | wc -l) -gt 1 ]; then
+            json=$(yq -o=json -I=0 $tmp_file)
+            folder_array=$(yq -o=json -I=0 ".folder" $tmp_file)
+            echo "matrix=${json}" >> $GITHUB_OUTPUT
+            echo "folders=${folder_array}" >> $GITHUB_OUTPUT
+          else
+            json=$(echo "folder: [skipDeploy]" | yq -o=json -I=0)
+            folder_array=$(echo "[skipDeploy]" | yq -o=json -I=0)
+            echo "matrix=${json}" >> $GITHUB_OUTPUT
+            echo "folders=${folder_array}" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT

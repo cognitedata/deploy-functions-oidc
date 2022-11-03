@@ -3,42 +3,62 @@ on:
   push:
     branches:
       - master
+
 jobs:
+  generate-matrix:
+    uses: "./.github/workflows/generate-matrix.yaml"
+    with:
+      deploy_folders: >-
+        (
+        "example_function1"
+        "example_function2"
+        )
+      trigger_deploy_all_folders: >-
+        (
+        "common"
+        )
+
   deploy:
+    needs: generate-matrix
     name: Deploy to Cognite Functions
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        function:
-          - example_function1
-          - example_function2
+        function: ${{ fromJson(needs.generate-matrix.outputs.folders) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
 
       - name: Extract service name
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         run: |
-          echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/_/-/g)"
-          echo "##[set-output name=under_name;]$(echo ${GITHUB_REF#refs/heads/} | sed -e s/-/_/g)"
+          name=$(echo ${GITHUB_REF#refs/heads/} | sed -e s/_/-/g)
+          under_name=$(echo ${GITHUB_REF#refs/heads/} | sed -e s/-/_/g)
+          echo "name=${name}" >> $GITHUB_OUTPUT
+          echo "under_name=${under_name}" >> $GITHUB_OUTPUT
         id: extract_name
 
       - name: Resolve secrets
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         env:
           BRANCH: ${{ steps.extract_name.outputs.under_name }}
         # Secret names should contain branch name with hyphens (if applicable)
         run: |
-          echo "##[set-output name=deployment_secret;]$(echo deploy_${BRANCH})"
-          echo "##[set-output name=schedules_secret;]$(echo schedules_${BRANCH})"
-          echo "##[set-output name=extra_secret;]$(echo secrets_${{ matrix.function }}_${BRANCH})"
+          echo "deployment_secret=deploy_${BRANCH}" >> $GITHUB_OUTPUT
+          echo "schedules_secret=schedules_${BRANCH}" >> $GITHUB_OUTPUT
+          echo "extra_secret=secrets_${{ matrix.function }}_${BRANCH}" >> $GITHUB_OUTPUT
         id: extract_secrets
 
       - name: Install yq
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         run: |
             sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64
             sudo chmod +x /usr/local/bin/yq
 
       - name: Extract config file parameters
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         run: |
           FILE="${{ matrix.function }}/function_config.yaml"
@@ -49,12 +69,13 @@ jobs:
               for CONFIGURATION in $ALLKEYS
               do
                   VALUE=$(yq -o=json -I=0 ".$CONFIGURATION" $FILE | sed -e 's/^"//' -e 's/"$//')
-                  echo ::set-output name=$CONFIGURATION::$VALUE
+                  echo "${CONFIGURATION}=${VALUE}" >> $GITHUB_OUTPUT
               done
           fi
         id: extract_params
 
       - name: Deploy and schedule ${{ matrix.function }}
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         uses: cognitedata/function-action-oidc@v1
         with:
           # Parameters you may likely hardcode here directly:
