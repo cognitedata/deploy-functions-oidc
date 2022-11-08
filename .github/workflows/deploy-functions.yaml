@@ -90,7 +90,7 @@ jobs:
           schedules_client_id: ${{ secrets.SCHEDULE_CLIENT_ID }}
           schedules_client_secret: ${{ secrets.SCHEDULE_SECRET }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
-          # Individual parameters per function we read from 'function_config.yaml':
+          # Individual parameters per function we read from 'common/functions_config_[environment].yaml', 'function_config.yaml' and 'function_config_[environment].yaml:
           cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
           cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
           data_set_id: ${{ steps.extract_params.outputs.data_set_id }}

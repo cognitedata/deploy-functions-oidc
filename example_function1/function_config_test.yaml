@@ -1,7 +1,1 @@
-memory: 0.1
-metadata:  # optional metadata mapping
-  version: "0.0.1-ALPHA"
-# Parameters that are usually not needed to pass (they have good default values):
-# function_file: handler.py  # Use case: Just don't...
-# function_deploy_timeout: 1500  # Use case: CDF on Azure has slower deployment speed.
-# post_deploy_cleanup: false  # Use case: You want to keep the uploaded zipped code files.
+data_set_id: 7289494538225428
