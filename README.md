@@ -47,7 +47,7 @@ Generally a function, named `my_cognite_function` in the example below, consists
 <summary><code>schedules/master.yaml</code></summary>
 
 Each function's folder contains a `schedules` folder where you can put your files that define your
-schedules. The files should be named equal to the environment name .yaml. We have added a file here called `test.yaml` which will be used 
+schedules. The files should be named equal to the environment name .yaml. We have added a file here called `test.yaml` which will be used
 for test environment (read more in the "deployment" section). If you don't need any schedules
 for a specific function, just delete it!
 
@@ -256,9 +256,9 @@ Most customers will require you to have more than a single project. Often we hav
 In order to support that, we need to have a process with formal gatekeepers and approvals. GitHub doesn't support tag protection but has environment and branch protection mechanisms with PRs as gatekeeping.
 
 #### Option 1- environment protection:
-In github environment settings configure environment protection rule to only allow deployment from protected branches and set reviewers required to approve running workflows on the environment. 
+In github environment settings configure environment protection rule to only allow deployment from protected branches and set reviewers required to approve running workflows on the environment.
 
-#### Option 2- branch protection: 
+#### Option 2- branch protection:
 To use branch protection to control deployment it is advised to create a separate github action deploying the given branch to the environment(s) desired.
 For that purpose, `deploy-push-master.yaml` has a specific branch that triggers the action (this can actually be a list, but please create another workflow file for that!). In addition to that your function' name receives branch name as a suffix, so you can deploy them separately.
 
