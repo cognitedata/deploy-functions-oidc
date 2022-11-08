@@ -3,16 +3,28 @@ name: Deploy Functions to CDF project using OIDC
 on:
   push:
     branches: [main]
+    
 jobs:
+  generate-matrix:
+    uses: "./.github/workflows/generate-matrix.yaml"
+    with:
+      deploy_folders: >-
+        (
+        "example_function1"
+        "example_function2"
+        )
+      trigger_deploy_all_folders: >-
+        (
+        "common"
+        )
+
   deploy:
+    needs: generate-matrix
     name: Deploy to Cognite Functions
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Add functions to be deploy in the function list.
-        function:
-          - example_function1
-          - example_function2
+        function: ${{ fromJson(needs.generate-matrix.outputs.folders) }}
         # Add environments to deploy to.
         # Each environment should have a corresponding github environment with secrets.
         environment:
