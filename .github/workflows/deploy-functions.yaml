@@ -2,7 +2,7 @@
 name: Deploy Functions to CDF project using OIDC
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   generate-matrix:
@@ -33,19 +33,23 @@ jobs:
     environment: ${{ matrix.environment }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.1.0
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
 
       - name: Extract branch name
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         run: echo branch=${GITHUB_REF#refs/heads/} >> $GITHUB_OUTPUT
         id: extract_branch
 
       - name: Install yq
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         run: |
           sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64
           sudo chmod +x /usr/local/bin/yq
 
       - name: Extract config file parameters
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         run: |
           CONFIG_FILES=(" common/function_config_${{ matrix.environment }}.yaml " \
@@ -69,6 +73,7 @@ jobs:
         id: extract_params
 
       - name: Extra secrets
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         # Secret name should be EXTRA_SECRETS_{function name} (if applicable)
         run: |
@@ -76,6 +81,7 @@ jobs:
         id: extract_secrets
 
       - name: Deploy and schedule ${{matrix.function }}
+        if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         uses: cognitedata/function-action-oidc@v1
         with:
           # Parameters you may likely hardcode here directly:

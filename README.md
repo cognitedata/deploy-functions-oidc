@@ -190,7 +190,7 @@ $ poetry run pre-commit run --all-files
 
 The template uses GitHub Actions to perform Code quality and Deployment operations. All workflows are located in the [.github/workflows](https://github.com/cognitedata/deploy-functions-oidc/tree/master/.github/workflows) folder.
 * `code-quality.yaml` Runs all code-quality checks and ensures the style, linting, basic static analysis
-* `deploy-push-master.yaml` Responsible for you PR deployment to customer environment(s)
+* `deploy-functions.yaml` Responsible for your PR deployment to customer environment(s)
 * `deploy-pr.yaml` Responsible for running tests / verification on Pull Requests
 
 The functions to be deployed are defined in the workflow yaml using the `deploy_folders` array variable for the `generate-matrix` workflow. Functions are only deployed if the pushed changes modified any files inside the function folder. In case you only modify code outside the function folders, such as tests, then the deployment won't run.
@@ -221,7 +221,7 @@ jobs:
 
 Each workflow consists of a series of sequentially executed steps. As an input to the workflows, you will need to provide parameters per each function in `function_config.yaml`.
 
-**Note**: If the `deploy-push-master.yaml` workflow fails after you have merged to `master`, you can check out the tab `Actions` in GitHub, where you will it. Here you can drill down to find the cause - and if it is unrelated to your code changes, simply do a re-run.
+**Note**: If the `deploy-function.yaml` workflow fails after you have merged to `master`, you can check out the tab `Actions` in GitHub, where you will it. Here you can drill down to find the cause - and if it is unrelated to your code changes, simply do a re-run.
 
 ## Secrets
 
@@ -260,10 +260,10 @@ In github environment settings configure environment protection rule to only all
 
 #### Option 2- branch protection:
 To use branch protection to control deployment it is advised to create a separate github action deploying the given branch to the environment(s) desired.
-For that purpose, `deploy-push-master.yaml` has a specific branch that triggers the action (this can actually be a list, but please create another workflow file for that!). In addition to that your function' name receives branch name as a suffix, so you can deploy them separately.
+For that purpose, `deploy-functions.yaml` has a specific branch (eg. master) that triggers the action (this can actually be a list, but please create another workflow file for that!). In addition to that your function name receives branch name as a suffix, so you can deploy them separately. For example `deploy-functions-test.yaml`.
 
 If you want to support more than one deployment (by default we only deploy and keep the content of `main` branch) you need the following:
-1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-push-prod.yaml` if it should run on merges to the `prod` branch. You then need to modify it so that all occurrences of `main` are changed to `prod`.
+1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-function-test.yaml` if it should run on merges to the `test` branch. You then need to modify it so that all occurrences of `master` are changed to `test`.
 2. Create new github environments with required secrets.
 
 # How to use it
