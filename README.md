@@ -41,6 +41,7 @@ Generally a function, named `my_cognite_function` in the example below, consists
  ┃ ┗ 📜???.yaml - (Optional) Schedule config for ??? environment.
  ┣ 📜__init__.py - Empty file (required to make the function into a package)
  ┣ 📜function_config.yaml - Configuration for the function
+ ┣ 📜function_config_???.yaml - Configuration for the function for ??? env (e.g. test, prod)
  ┣ 📜handler.py - Module with script inside a handle function
  ┗ 📜requirements.txt - Explicitly states the dependencies needed to run the handler.py script.
 ```
