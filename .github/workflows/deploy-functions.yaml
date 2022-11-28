@@ -94,7 +94,7 @@ jobs:
           deployment_client_id: ${{ secrets.DEPLOYMENT_CLIENT_ID }}
           deployment_client_secret: ${{secrets.DEPLOYMENT_SECRET }}
           schedules_client_id: ${{ secrets.SCHEDULE_CLIENT_ID }}
-          schedules_client_secret: ${{ secrets.SCHEDULE_SECRET }}
+          schedules_client_secret: ${{ secrets.SCHEDULE_CLIENT_SECRET }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
           # Individual parameters per function we read from 'common/functions_config_[environment].yaml', 'function_config.yaml' and 'function_config_[environment].yaml:
           cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
