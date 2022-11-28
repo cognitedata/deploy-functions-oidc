@@ -232,7 +232,7 @@ All secrets should be organized in github environments, and the following should
 * `DEPLOYMENT_CLIENT_ID` should contain the client id (application id) for the the service account used to deploy Functions on merges..
 * `DEPLOYMENT_CLIENT_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
 * `SCHEDULE_CLIENT_ID` should contain the client id (application id)  for the service account used at runtime when running on a schedule.
-* `SCHEDULE_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
+* `SCHEDULE_CLIENT_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
 * **Super-pro-tip:** By having multiple environments you can support more than one target CDF project!
 
 Adding extra secrets to specific functions:
