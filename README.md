@@ -85,7 +85,7 @@ metadata:
 <details>
 <summary><code>function_config_test.yaml</code></summary>
 
-Each function's folder should additionally have a environment specific config file `function_config_{environment}.yaml` file where you can specify
+Each function's folder can have an optional environment specific config files named `function_config_{environment}.yaml`, where you can specify
 configuration parameters specific for the environment and the function. These parameters are extracted and used by the Github
 Workflow files during deployment (read more in the "build and deployment" section) and will override elements set in function_config.yaml file.
 
