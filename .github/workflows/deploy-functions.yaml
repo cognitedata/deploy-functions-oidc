@@ -92,7 +92,7 @@ jobs:
           schedule_file: schedules/${{ matrix.environment }}.yaml
           # Parameters we get from Github secret storage:
           deployment_client_id: ${{ secrets.DEPLOYMENT_CLIENT_ID }}
-          deployment_client_secret: ${{secrets.DEPLOYMENT_SECRET }}
+          deployment_client_secret: ${{secrets.DEPLOYMENT_CLIENT_SECRET }}
           schedules_client_id: ${{ secrets.SCHEDULE_CLIENT_ID }}
           schedules_client_secret: ${{ secrets.SCHEDULE_CLIENT_SECRET }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
