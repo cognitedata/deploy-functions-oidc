@@ -36,7 +36,9 @@ Generally a function, named `my_cognite_function` in the example below, consists
 ```
 📦my_cognite_function
  ┣ 📂schedules
- ┃ ┗ 📜test.yaml - (Optional) Schedule for dev environment if you want to execute the function on a schedule.
+ ┃ ┗ 📜test.yaml - (Optional) Schedule config for test environment.
+ ┃ ┗ 📜prod.yaml - (Optional) Schedule config for prod environment.
+ ┃ ┗ 📜???.yaml - (Optional) Schedule config for ??? environment.
  ┣ 📜__init__.py - Empty file (required to make the function into a package)
  ┣ 📜function_config.yaml - Configuration for the function
  ┣ 📜handler.py - Module with script inside a handle function
