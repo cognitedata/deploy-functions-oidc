@@ -49,7 +49,7 @@ Generally a function, named `my_cognite_function` in the example below, consists
 <summary><code>schedules/master.yaml</code></summary>
 
 Each function's folder contains a `schedules` folder where you can put your files that define your
-schedules. The files should be named equal to the environment name .yaml. We have added a file here called `test.yaml` which will be used
+schedules. The file has to be named `{environment_name}.yaml` (e.g. `test.yaml`, `prod.yaml` etc). We have added a file here called `test.yaml` which will be used
 for test environment (read more in the "deployment" section). If you don't need any schedules
 for a specific function, just delete it!
 
