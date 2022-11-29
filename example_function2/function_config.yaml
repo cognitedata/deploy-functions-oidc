@@ -1,7 +1,3 @@
-# Note: Parameters can be hardcoded directly in 'deploy-push.yaml'
-# if you do not need to vary them between your functions!
-schedules_client_id: d9b2bd26-2d84-4960-bbdc-ecdd9743975d
-schedules_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
 common_folder: common
 description: "This function does an important job. Yes :doge:"
 owner: The Wicked Froge🐸 Team
