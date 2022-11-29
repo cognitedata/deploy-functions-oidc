@@ -253,6 +253,24 @@ The short answer is: because GitHub asks us to:
 > To help ensure that GitHub redacts your secret in logs, avoid using structured data as the values of secrets. For example, avoid creating secrets that contain JSON or encoded Git blobs.
 https://docs.github.com/en/actions/reference/encrypted-secrets
 
+## Configuration of functions
+
+The configuration of the function is split into 3 different configuration files in addition to the schedules configuration
+The function configuration files for my_cognite_function would be:
+```
+📦common
+┣ 📜function_config_???.yaml - Global configuration for all functions for ??? env (e.g. dev, test, prod).
+📦my_cognite_function
+ ┣ 📜function_config.yaml - Configuration for the function
+ ┣ 📜function_config_???.yaml - Configuration for the function for ??? env (e.g. dev, test, prod)
+```
+* `common/function_config_???.yaml` Is applicable for all functions for the specified ??? environment. This file would normally contain information like `schedules_tenant_id`.
+* `my_cognite_function/function_config.yaml` This is a configuration file that is applicable for the function for all environments. Most configuration would be here.
+* `my_cognite_function/function_config_???.yaml` This is a configuration file that is applicable for the function for the ??? environments. Typically at least `data_set_id` would reside here.
+
+If same key is found in different configuration files, the last read will be applied. The GitHub action reads these configurations in the order specified here.
+Access configuration is stored as secrets in GitHub under `DEPLOYMENT_CLIENT_ID`, `DEPLOYMENT_CLIENT_SECRET`, `SCHEDULE_CLIENT_ID` and `SCHEDULE_CLIENT_SECRET`.
+
 ## Continuous Deployment
 
 Most customers will require you to have more than a single project. Often we have two: `development` and `production`, some customers have up to 4: `dev`, `test`, `pre-prod`, `prod`.
