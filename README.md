@@ -291,9 +291,6 @@ If you want to support more than one deployment (by default we only deploy and k
 ## Create a repository with this template
 First, click the green ["Use this template"](https://github.com/cognitedata/deploy-functions-oidc/generate) button to create a repository from this template.
 
-## [optional] Access
-Secondly, go to "Settings", "Manage access" and add `forge` team to Administrators, so we can help you faster with fewer questions.
-
 ## Getting started
 1. Open your terminal and navigate to your newly cloned repo.
 1. Run `poetry install`
