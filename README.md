@@ -12,7 +12,7 @@ As of September 8, 2021 these are the required steps to use Cognite Functions wi
     - 1 app registration for the deployment service principal
     - **[optional]** If you need your functions to be run on schedule(s): 1 additional app registration for the schedules service principal
     - Create a client secret for both, then store them immediately in LastPass or similar together with the corresponding client ID for the app registration. You'll find that under Overview / Application (client) ID.
-    - The deployment service principal must be added as a member to an existing (or create a new) ADD security group that is then linked to a CDF group with capabilities necessary for functions deployment. The way you link these is by copying the `Object ID` of the ADD group and using that as the `Source ID` for the CDF group. The latest updated deployment requirements can be found on [Confluence / Cognite Functions](https://cognitedata.atlassian.net/wiki/spaces/MLOP/pages/1963098642/Cognite+Functions), but **typically require the following**:
+    - The deployment service principal must be added as a member to an existing (or create a new) AAD security group that is then linked to a CDF group with capabilities necessary for functions deployment. The way you link these is by copying the `Object ID` of the AAD group and using that as the `Source ID` for the CDF group. The latest updated deployment requirements can be found on [Confluence / Cognite Functions](https://cognitedata.atlassian.net/wiki/spaces/MLOP/pages/1963098642/Cognite+Functions), but **typically require the following**:
         - `Functions:WRITE` and `Functions:READ` in `scope: all`
         - `Files:READ` and `Files:WRITE` in `scope: all` OR scoped to a data set (recommended, but then you also need dataset capabilities like `Datasets:READ` - and if it is write protected, `Datasets:OWNER` as well!)
         - `Projects:LIST` in `scope: all`
@@ -290,9 +290,6 @@ If you want to support more than one deployment (by default we only deploy and k
 # How to use it
 ## Create a repository with this template
 First, click the green ["Use this template"](https://github.com/cognitedata/deploy-functions-oidc/generate) button to create a repository from this template.
-
-## [optional] Access
-Secondly, go to "Settings", "Manage access" and add `forge` team to Administrators, so we can help you faster with fewer questions.
 
 ## Getting started
 1. Open your terminal and navigate to your newly cloned repo.
