@@ -11,5 +11,5 @@ def handle(data, client):
     data["sum"] = sum_integers(data["a"], data["b"])
 
     print("Will now return updated data")
-
+    print("Changes done to ex func 2")
     return data
