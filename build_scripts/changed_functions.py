@@ -20,7 +20,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(f"Got folders: {args.folders!r}")  # noqa
+    print(f"Got funtion folders: {args.folders!r}")  # noqa
     print(f"And deploy all folders: {args.deploy_all!r}")  # noqa
     function_folders = {f.strip() for f in args.folders[0].split(",")}
     deploy_all_folders = (args.deploy_all or {}) and {f.strip() for f in args.deploy_all.split(",")}
@@ -37,7 +37,7 @@ def main():
     print(f"Detected changed folders: {changed_folders}")  # noqa
     deploy = []
     for changed_folder in changed_folders:
-        if changed_folder in deploy_all_folders:
+        if any(changed_folder.startswith(deploy_all) for deploy_all in deploy_all_folders):
             deploy = list(function_folders)
             break
         if changed_folder in function_folders:
