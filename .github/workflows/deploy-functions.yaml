@@ -8,15 +8,8 @@ jobs:
   generate-matrix:
     uses: "./.github/workflows/generate-matrix.yaml"
     with:
-      deploy_folders: >-
-        (
-        "example_function1"
-        "example_function2"
-        )
-      trigger_deploy_all_folders: >-
-        (
-        "common"
-        )
+      deploy_folders: "example_function1, example_function2"
+      trigger_deploy_all_folders: "common"
 
   deploy:
     needs: generate-matrix
