@@ -20,7 +20,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(f"Got funtion folders: {args.folders!r}")  # noqa
+    print(f"Got function folders: {args.folders!r}")  # noqa
     print(f"And deploy all folders: {args.deploy_all!r}")  # noqa
     function_folders = {f.strip() for f in args.folders[0].split(",")}
     deploy_all_folders = (args.deploy_all or {}) and {f.strip() for f in args.deploy_all.split(",")}
