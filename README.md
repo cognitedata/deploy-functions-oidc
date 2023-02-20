@@ -203,7 +203,7 @@ then the deployment won't run.
 
 **Important** *The way changes are picked up is by diffing vs the previous commit, thus you risk functions not deploying
 unless you always squash to master. You can control this behaviour in the GitHub repo settings*,
-see [## Getting started](##-getting-started) for how to change GitHub repo settings to enforce squash commits.
+see [## Getting started](#getting-started) for how to change GitHub repo settings to enforce squash commits.
 
 In addition, `trigger_deploy_all_folders` is an optional array variable that specifies the folders with common dependencies. If specified then updates to the files in those folders will trigger deployment of all the functions in `deploy_folders`.
 
