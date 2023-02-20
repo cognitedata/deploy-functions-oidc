@@ -25,7 +25,7 @@ def main():
     function_folders = {f.strip() for f in args.folders[0].split(",")}
     deploy_all_folders = (args.deploy_all or {}) and {f.strip() for f in args.deploy_all.split(",")}
 
-    process = subprocess.Popen("git diff --name-only HEAD^ HEAD".split(" "), stdout=subprocess.PIPE)  # nosec
+    process = subprocess.Popen("git diff --name-only HEAD^ HEAD".split(), stdout=subprocess.PIPE)  # nosec
     changed_folders, _ = process.communicate()
     changed_folders = list(
         {
