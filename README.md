@@ -196,7 +196,14 @@ The template uses GitHub Actions to perform Code quality and Deployment operatio
 * `deploy-functions.yaml` Responsible for your PR deployment to customer environment(s)
 * `deploy-pr.yaml` Responsible for running tests / verification on Pull Requests
 
-The functions to be deployed are defined in the workflow yaml using the `deploy_folders` array variable for the `generate-matrix` workflow. Functions are only deployed if the pushed changes modified any files inside the function folder. In case you only modify code outside the function folders, such as tests, then the deployment won't run.
+The functions to be deployed are defined in the workflow yaml using the `deploy_folders` array variable for
+the `generate-matrix` workflow. Functions are only deployed if the pushed changes modified any files inside
+the function folder. In case you only modify code outside the function folders, such as tests,
+then the deployment won't run.
+
+**Important** *The way changes are picked up is by diffing vs the previous commit, thus you risk functions not deploying
+unless you always squash to master. You can control this behaviour in the GitHub repo settings*,
+see [## Getting started](##-getting-started) for how to change GitHub repo settings to enforce squash commits.
 
 In addition, `trigger_deploy_all_folders` is an optional array variable that specifies the folders with common dependencies. If specified then updates to the files in those folders will trigger deployment of all the functions in `deploy_folders`.
 
@@ -211,15 +218,9 @@ jobs:
   generate-matrix:
     uses: "./.github/workflows/generate-matrix.yaml"
     with:
-      deploy_folders: >-
-        (
-        "example_function1"
-        "example_function2"
-        )
-      trigger_deploy_all_folders: >-
-        (
-        "common"
-        )
+      deploy_folders: "example_function1, example_function2"
+      trigger_deploy_all_folders: "common"
+
 ```
 
 Each workflow consists of a series of sequentially executed steps. As an input to the workflows, you will need to provide parameters per each function in `function_config.yaml`.
@@ -285,7 +286,7 @@ For that purpose, `deploy-functions.yaml` has a specific branch (eg. master) tha
 
 If you want to support more than one deployment (by default we only deploy and keep the content of `main` branch) you need the following:
 1. Create a new separate workflow file for the new environment and name it accordingly, i.e. `deploy-function-test.yaml` if it should run on merges to the `test` branch. You then need to modify it so that all occurrences of `master` are changed to `test`.
-2. Create new github environments with required secrets.
+2. Create new GitHub environments with required secrets.
 
 # How to use it
 ## Create a repository with this template
@@ -293,6 +294,10 @@ First, click the green ["Use this template"](https://github.com/cognitedata/depl
 
 ## Getting started
 1. Open your terminal and navigate to your newly cloned repo.
+2. Only allow squash commits: GitHub Repo Settings &#8594; Pull Requests &#8594; Check `Allow squash merging` and
+   uncheck `Allow merge commits` and `Allow rebase merging`. See [Build and deployment](#build-and-deployment) for
+   details, in short, changes are detected based on comparing current to last commit which is only valid with
+   squash commits.
 1. Run `poetry install`
 1. Run `poetry run pre-commit install`
 
