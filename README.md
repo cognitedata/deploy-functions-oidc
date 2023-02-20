@@ -300,6 +300,7 @@ First, click the green ["Use this template"](https://github.com/cognitedata/depl
    squash commits.
 1. Run `poetry install`
 1. Run `poetry run pre-commit install`
+![image](https://user-images.githubusercontent.com/60234212/220147707-b74f5e72-6ee8-4fbb-b01d-5366d5c5ba3d.png)
 
 ## Modify the template
 
