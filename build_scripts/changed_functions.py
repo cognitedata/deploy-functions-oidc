@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Upload PDFs to CDF")
+    parser = argparse.ArgumentParser(description="Upload Python code to Functions in CDF")
     parser.add_argument(
         "folders",
         type=str,
@@ -20,21 +20,20 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print(f"Got function folders: {args.folders!r}")  # noqa
-    print(f"And deploy all folders: {args.deploy_all!r}")  # noqa
+    print(f"Got function folders: {args.folders!r}")
+    print(f"And deploy all folders: {args.deploy_all!r}")
     function_folders = {f.strip() for f in args.folders[0].split(",")}
-    deploy_all_folders = (args.deploy_all or {}) and {f.strip() for f in args.deploy_all.split(",")}
+    deploy_all_folders = set()
+    if args.deploy_all:
+        deploy_all_folders = {f.strip() for f in args.deploy_all.split(",")}
 
-    process = subprocess.Popen("git diff --name-only HEAD^ HEAD".split(), stdout=subprocess.PIPE)  # nosec
-    changed_folders, _ = process.communicate()
-    changed_folders = list(
-        {
-            "/".join(clean.parts if clean.name != "schedules" else clean.parts.parts)
-            for f in changed_folders.decode().split("\n")
-            if (clean := Path(f).parent) and clean.exists()
-        }
-    )
-    print(f"Detected changed folders: {changed_folders}")  # noqa
+    changed_folders = subprocess.check_output("git diff --name-only HEAD^ HEAD".split(), text=True).split()
+    changed_folders = {
+        "/".join(parts if clean.name != "schedules" else parts.parts)
+        for f in changed_folders
+        if (clean := Path(f).parent) and clean.exists() and (parts := clean.parts)
+    }
+    print(f"Detected changed folders: {sorted(changed_folders)}")
     deploy = []
     for changed_folder in changed_folders:
         if any(changed_folder.startswith(deploy_all) for deploy_all in deploy_all_folders):
@@ -49,8 +48,8 @@ def main():
     json_format = json.dumps({"folders": deploy})
 
     with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
-        print(f"matrix={json_format}", file=fh)  # noqa
-        print(f"folders={str(deploy)}", file=fh)  # noqa
+        print(f"matrix={json_format}", file=fh)
+        print(f"folders={str(deploy)}", file=fh)
 
 
 if __name__ == "__main__":

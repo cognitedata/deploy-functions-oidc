@@ -89,7 +89,10 @@ jobs:
           schedules_client_id: ${{ secrets.SCHEDULE_CLIENT_ID }}
           schedules_client_secret: ${{ secrets.SCHEDULE_CLIENT_SECRET }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
-          # Individual parameters per function we read from 'common/functions_config_[environment].yaml', 'function_config.yaml' and 'function_config_[environment].yaml:
+          # Individual parameters per function we read from:
+          # - common/functions_config_[environment].yaml
+          # - function_config.yaml
+          # - function_config_[environment].yaml
           cdf_project: ${{ steps.extract_params.outputs.cdf_project }}
           cdf_cluster: ${{ steps.extract_params.outputs.cdf_cluster }}
           data_set_id: ${{ steps.extract_params.outputs.data_set_id }}
@@ -102,3 +105,6 @@ jobs:
           owner: ${{ steps.extract_params.outputs.owner }}
           env_vars: ${{ steps.extract_params.outputs.env_vars }}
           metadata: ${{ steps.extract_params.outputs.metadata }}
+          # Individual parameters seldom needed:
+          index_url: ${{ steps.extract_params.outputs.index_url }}
+          extra_index_urls: ${{ steps.extract_params.outputs.extra_index_urls }}

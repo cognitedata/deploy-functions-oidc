@@ -1,4 +1,4 @@
-## Cognite function template
+## Cognite function template [1.3.0]
 [![Deploy Function to CDF project using OIDC](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml/badge.svg)](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml)
 
 ### NB: Due to how we have to deploy code, [running locally](https://github.com/cognitedata/deploy-functions-oidc#run-code-locally) requires an extra step. Please read it!
@@ -125,7 +125,7 @@ but it doesn't hurt to be specific here!
 Example ``requirements.txt`` file
 
 ```text
-cognite-sdk==2.38.2
+cognite-sdk>=5.9.0
 function/my_private_package-1.3.1-py3-none-any.whl
 python-dotenv==0.19.2
 ```
