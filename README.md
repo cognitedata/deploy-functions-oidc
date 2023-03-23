@@ -1,5 +1,4 @@
 ## Cognite function template [1.3.0]
-[![Deploy Function to CDF project using OIDC](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml/badge.svg)](https://github.com/cognitedata/deploy-functions-oidc/actions/workflows/deploy-push-master.yaml)
 
 ### NB: Due to how we have to deploy code, [running locally](https://github.com/cognitedata/deploy-functions-oidc#run-code-locally) requires an extra step. Please read it!
 
