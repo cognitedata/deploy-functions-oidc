@@ -1,3 +1,5 @@
+# Note: Parameters can be hardcoded directly in '.github/workflows/deploy-functions.yaml'
+# if you do not need to vary them between your functions!
 common_folder: common
 description: "This function does an important job. Yes :doge:"
 owner: The Wicked Froge🐸 Team
