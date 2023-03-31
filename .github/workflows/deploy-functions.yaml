@@ -82,7 +82,7 @@ jobs:
           deployment_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
           schedules_client_id: 9347b37d-e94f-44d5-a69d-5867f55d7f6e
           schedules_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
-          cdf_project: forge-sandbox
+          cdf_project: forge-sandbox  # or my-company, my-organisation-prod etc.
           cdf_cluster: greenfield  # or api, westeurope-1, etc.
           runtime: py39
 
