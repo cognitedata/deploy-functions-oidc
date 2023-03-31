@@ -45,9 +45,7 @@ jobs:
         if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
         shell: bash
         run: |
-          CONFIG_FILES=(" common/function_config_${{ matrix.environment }}.yaml " \
-            "${{ matrix.function }}/function_config.yaml " \
-            "${{ matrix.function }}/function_config_${{ matrix.environment }}.yaml ")
+          CONFIG_FILES=("${{ matrix.function }}/function_config.yaml ${{ matrix.function }}/function_config_${{ matrix.environment }}.yaml")
           echo "Config files to use are ${CONFIG_FILES[@]}"
           for FILE in ${CONFIG_FILES[@]}
           do
@@ -99,7 +97,6 @@ jobs:
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
 
           # Individual parameters per function we read from:
-          # - common/functions_config_[environment].yaml
           # - function_config.yaml
           # - function_config_[environment].yaml
           data_set_id: ${{ steps.extract_params.outputs.data_set_id }}
