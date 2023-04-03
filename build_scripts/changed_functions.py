@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 
 from pathlib import Path
 
@@ -19,6 +20,7 @@ def parse_args():
 
 
 def main():
+    print(sys.argv)
     args = parse_args()
     print(f"Got function folders: {args.folders!r}")
     print(f"And deploy all folders: {args.deploy_all!r}")
