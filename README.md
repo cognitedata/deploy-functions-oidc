@@ -1,4 +1,4 @@
-## Cognite function template [1.5.0]
+## Cognite function template [1.6.0]
 
 ### NB: Due to how we have to deploy code, [running locally](https://github.com/cognitedata/deploy-functions-oidc#run-code-locally) requires an extra step. Please read it!
 
