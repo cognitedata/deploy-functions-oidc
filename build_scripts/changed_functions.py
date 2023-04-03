@@ -29,7 +29,7 @@ def main():
         print(f"Input: Common folder (may force deploy all): {deploy_all_folder!r}")
 
     # Compare against previous commit under the assumption of squash-only merges:
-    diff = subprocess.check_output("git diff --name-only HEAD^^ HEAD".split(), text=True).split()
+    diff = subprocess.check_output("git diff --name-only HEAD^ HEAD".split(), text=True).split()
     changed_files = set(map(Path, diff))
 
     deploy_all = False
