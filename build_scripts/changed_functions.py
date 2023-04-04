@@ -14,42 +14,43 @@ def parse_args():
         nargs=1,
         help="The folders to monitor for deployment to cognite functions",
     )
-    parser.add_argument("deploy_all", type=str, nargs="?", help="The folders to deploy to all ", default=None)
+    parser.add_argument("deploy_all", type=str, nargs="?", help="The folders to deploy to all", default=None)
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    print(f"Got function folders: {args.folders!r}")
-    print(f"And deploy all folders: {args.deploy_all!r}")
-    function_folders = {f.strip() for f in args.folders[0].split(",")}
-    deploy_all_folders = set()
+    function_folders = sorted({f.strip() for f in args.folders[0].split(",")})
+    print(f"Input: Function folders to consider (re)deploying: {function_folders}")
+
+    deploy_all_folder = None
     if args.deploy_all:
-        deploy_all_folders = {f.strip() for f in args.deploy_all.split(",")}
+        deploy_all_folder = args.deploy_all.strip()
+        print(f"Input: Common folder (may force deploy all): {deploy_all_folder!r}")
 
-    changed_folders = subprocess.check_output("git diff --name-only HEAD^ HEAD".split(), text=True).split()
-    changed_folders = {
-        "/".join(parts if clean.name != "schedules" else parts.parts)
-        for f in changed_folders
-        if (clean := Path(f).parent) and clean.exists() and (parts := clean.parts)
-    }
-    print(f"Detected changed folders: {sorted(changed_folders)}")
-    deploy = []
-    for changed_folder in changed_folders:
-        if any(changed_folder.startswith(deploy_all) for deploy_all in deploy_all_folders):
-            deploy = list(function_folders)
-            break
-        if changed_folder in function_folders:
-            deploy.append(changed_folder)
+    # Compare against previous commit under the assumption of squash-only merges:
+    diff = subprocess.check_output("git diff --name-only HEAD^ HEAD".split(), text=True).split()
+    changed_files = set(map(Path, diff))
 
-    if not deploy:
-        deploy = ["skipDeploy"]
+    deploy_all = False
+    if deploy_all_folder is not None:
+        deploy_all = any(f.is_relative_to(deploy_all_folder) for f in changed_files)
 
-    json_format = json.dumps({"folders": deploy})
+    if deploy_all:
+        to_deploy = function_folders
+        print("Common folder has one or more changed file(s), will deploy all functions")
+    else:
+        to_deploy = [fld for fld in function_folders if any(f.is_relative_to(fld) for f in changed_files)]
+
+    if to_deploy:
+        print(f"To be deployed: {to_deploy}")
+    else:
+        print("No changed folders detected, skipping deployment!")
+        to_deploy = ["skipDeploy"]
 
     with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
-        print(f"matrix={json_format}", file=fh)
-        print(f"folders={str(deploy)}", file=fh)
+        print(f"matrix={json.dumps({'folders': to_deploy})}", file=fh)
+        print(f"folders={to_deploy}", file=fh)
 
 
 if __name__ == "__main__":
