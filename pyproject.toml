@@ -7,7 +7,7 @@ authors = ["hakon.treider@cognite.com"]
 [tool.poetry.dependencies]
 python = "^3.9"
 pytest-custom-exit-code = ">=0.3"
-cognite-sdk = ">=5"
+cognite-sdk = ">=6"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7"
