@@ -144,13 +144,21 @@ Finally, you specify the dependency as shown above ``function/my_private_package
 Note that ``function/`` is **not** a placeholder. For more information about wheels see
 [What Are Python Wheels and Why Should You Care?](https://realpython.com/python-wheels/)
 
-**Caveat**: For CDF on Azure, certain packages are already installed and need to be excluded from the ``requirements.txt`` file.
+**Caveats**:
+1. If you create the ``requirements.txt`` by using poetry, you must set the option
+``--without-hashes`` as Azure does not support hashes in the ``requirements.txt`` file.
+
+```bash
+poetry export -f requirements.txt --output requirements.txt --without-hashes
+```
+
+2. For CDF on Azure, certain packages are already installed and need to be excluded from the ``requirements.txt`` file.
 As of October 2023, these packages are:
-* ``azure-functions``
-* ``azure-identity``
-* ``azure-keyvault-keys``
-* ``azure-storage-blob``
-* ``cryptography``
+    * ``azure-functions``
+    * ``azure-identity``
+    * ``azure-keyvault-keys``
+    * ``azure-storage-blob``
+    * ``cryptography``
 
 See more information at [docs.cognite.com](https://docs.cognite.com/cdf/functions/known_issues/#faulty-requirementstxt)
 
@@ -158,13 +166,6 @@ If you are using pip, you can achieve this with the --exclude flag:
 
 ```bash
 pip freeze --exclude azure-functions --exclude azure-identity --exclude azure-keyvault-keys --exclude azure-storage-blob --exclude cryptography
-```
-
-**Caveat**: If you create the ``requirements.txt`` by using poetry, you must set the option
-``--without-hashes`` as Azure does not support hashes in the ``requirements.txt`` file.
-
-```bash
-poetry export -f requirements.txt --output requirements.txt --without-hashes
 ```
 
 </details>
