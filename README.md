@@ -101,7 +101,7 @@ data_set_id: 7289494538225428
 <summary><code>handler.py</code></summary>
 
 Example below, for a full description of the arguments that can be passed to this function see
-[cognite-experimental-sdk](https://cognite-sdk-experimental.readthedocs-hosted.com/en/latest/cognite.html#create-function).
+[cognite-sdk-python](https://cognite-sdk-python.readthedocs-hosted.com/en/latest/functions.html#create-function).
 
 ```python
 def handle(data, client, secrets, function_call_info):
