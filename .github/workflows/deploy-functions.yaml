@@ -26,8 +26,10 @@ jobs:
     environment: ${{ matrix.environment }}
 
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4
         if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
+        with:  # we deploy based on a diff vs. prev commit, thus we need history:
+          fetch-depth: 0
 
       - name: Extract branch name
         if: ${{ contains(needs.generate-matrix.outputs.deploy_folders, matrix.function) }}
