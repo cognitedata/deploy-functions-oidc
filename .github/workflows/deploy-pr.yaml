@@ -46,7 +46,7 @@ jobs:
             if [ -d "tests/${{ matrix.function }}" ]; then
               PYTHONPATH=${{ matrix.function }} poetry run pytest "tests/${{ matrix.function }}" -m "unit"
             else
-              echo "No tests to run for ${{ matrix.function }}"
+              echo "::warning file=$(basename $0),line=$LINENO::No tests to run for ${{ matrix.function }}"
             fi
       # If your repo decides to rename 'common', remember to update below:
       - name: Test util/shared code
