@@ -95,7 +95,7 @@ jobs:
 
           # Parameters we get from Github secret storage:
           deployment_client_secret: ${{secrets.DEPLOYMENT_CLIENT_SECRET }}
-          schedules_client_secret: ${{ secrets.SCHEDULE_CLIENT_SECRET }}
+          schedules_client_secret: ${{ secrets.SCHEDULES_CLIENT_SECRET }}
           function_secrets: ${{ secrets[steps.extract_secrets.outputs.extra_secrets_name] }}
 
           # Individual parameters per function we read from:

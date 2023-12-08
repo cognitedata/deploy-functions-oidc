@@ -246,7 +246,7 @@ Each workflow consists of a series of sequentially executed steps. As an input t
 **All client secrets *must* be stored as GitHub secrets.**
 All secrets should be organized in github environments, and the following should be defined:
 * `DEPLOYMENT_CLIENT_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
-* `SCHEDULE_CLIENT_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
+* `SCHEDULES_CLIENT_SECRET` should contain the client secret for the service account used at runtime when running on a schedule.
 * **Super-pro-tip:** By having multiple environments you can support more than one target CDF project!
 
 Adding extra secrets to specific functions:
@@ -282,7 +282,7 @@ The function configuration files for my_cognite_function would be:
 * `my_cognite_function/function_config_???.yaml` This is a configuration file that is applicable for the function for the ??? environments. Typically at least `data_set_id` would reside here.
 
 If same key is found in different configuration files, the last read will be applied. The GitHub action reads these configurations in the order specified here.
-Access configuration is stored as secrets in GitHub under `DEPLOYMENT_CLIENT_ID`, `DEPLOYMENT_CLIENT_SECRET`, `SCHEDULE_CLIENT_ID` and `SCHEDULE_CLIENT_SECRET`.
+Access configuration is stored as secrets in GitHub under `DEPLOYMENT_CLIENT_ID`, `DEPLOYMENT_CLIENT_SECRET`, `SCHEDULE_CLIENT_ID` and `SCHEDULES_CLIENT_SECRET`.
 
 ## Continuous Deployment
 
