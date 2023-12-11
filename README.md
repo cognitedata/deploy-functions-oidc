@@ -282,7 +282,7 @@ The function configuration files for my_cognite_function would be:
 * `my_cognite_function/function_config_???.yaml` This is a configuration file that is applicable for the function for the ??? environments. Typically at least `data_set_id` would reside here.
 
 If same key is found in different configuration files, the last read will be applied. The GitHub action reads these configurations in the order specified here.
-Access configuration is stored as secrets in GitHub under `DEPLOYMENT_CLIENT_ID`, `DEPLOYMENT_CLIENT_SECRET`, `SCHEDULE_CLIENT_ID` and `SCHEDULES_CLIENT_SECRET`.
+Client secrets are stored as secrets in GitHub under `DEPLOYMENT_CLIENT_SECRET` and `SCHEDULES_CLIENT_SECRET`.
 
 ## Continuous Deployment
 
