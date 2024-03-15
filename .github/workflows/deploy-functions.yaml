@@ -21,7 +21,7 @@ jobs:
         # Add environments to deploy to.
         # Each environment should have a corresponding github environment with secrets.
         environment:
-          - test
+          - main
 
     environment: ${{ matrix.environment }}
 
@@ -80,12 +80,12 @@ jobs:
           # Parameters you may likely hardcode here directly.
           # - If you need to specify them individually, change them into...:
           # foo_bar: ${{ steps.extract_params.outputs.foo_bar }}
-          deployment_client_id: 5f18d04a-2d2a-41a2-aa15-bd62a149cd14
-          deployment_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
-          schedules_client_id: 9347b37d-e94f-44d5-a69d-5867f55d7f6e
-          schedules_tenant_id: 0d75f6b8-c6b9-4e84-baca-503e08aa7e4a
-          cdf_project: forge-sandbox  # or my-company, my-organisation-prod etc.
-          cdf_cluster: greenfield  # or api, westeurope-1, etc.
+          deployment_client_id: 3cbfda64-af9b-44c9-b8ae-950eda117d8e
+          deployment_tenant_id: f063ad76-1dca-47d4-b846-3ebd24730338
+          schedules_client_id: 3cbfda64-af9b-44c9-b8ae-950eda117d8e
+          schedules_tenant_id: f063ad76-1dca-47d4-b846-3ebd24730338
+          cdf_project: kyotogroup-dev  # or my-company, my-organisation-prod etc.
+          cdf_cluster: westeurope-1  # or api, westeurope-1, etc.
           runtime: py39
 
           # Parameters we can read/extract automatically:
