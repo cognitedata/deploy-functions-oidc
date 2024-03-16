@@ -2,7 +2,7 @@ from common.utilities import sum_integers
 
 
 def handle(data, client):
-    print("I got the following data:")
+    print("I got the following data: ")
     print(data)
 
     if not ("a" in data and "b" in data):

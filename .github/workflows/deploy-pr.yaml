@@ -8,8 +8,7 @@ jobs:
     strategy:
       matrix:
         function:
-          - example_function1
-          - example_function2
+          - example_function
     steps:
       - uses: actions/checkout@v2
 
