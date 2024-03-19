@@ -298,6 +298,7 @@ def process_files(
                     f"[WARNING] List of assetsIds for file {file.external_id} > 1000 ({len(asset_ids_list)}), "
                     "cutting list at 1000 items"
                 )
+
                 asset_ids_list = asset_ids_list[:1000]
 
             if config.debug:
@@ -349,18 +350,13 @@ def detect_create_annotation(
 
     asset_contextualization_job = retrieve_diagram_with_retry(client=client, entities=asset_entities, file_id=file_external_id, min_tokens=1)
 
-    # if (("items" not in asset_contextualization_job.result or not asset_contextualization_job.result["items"])
-    #         and ("items" not in file_contextualization_job.result or not file_contextualization_job.result["items"])):
-    #     return [], []
-
     asset_ids_found = []
     asset_names_found = []
     asset_annotation_list_to_create: list[Annotation] = []
     file_annotation_list_to_create: list[Annotation] = []
     to_delete_annotation_list: list[int] = []
 
-    ### Asset annotations ###
-    # build a list of annotation BEFORE filtering on matchThreshold
+    # Asset annotation processing
     asset_annotated_resource_id = asset_contextualization_job.result["items"][0]["fileId"]
     if asset_annotated_resource_id in annotation_list:
         to_delete_annotation_list.extend(annotation_list[asset_annotated_resource_id])
@@ -415,7 +411,7 @@ def detect_create_annotation(
     client.annotations.create(asset_annotation_list_to_create)
     print(f"Completed creating asset annotations for file: {file_external_id}, Created asset annotation count: {len(asset_annotation_list_to_create)}")
 
-    ############  File annotation processing  #############
+    # File annotation processing
     file_contextualization_job = retrieve_diagram_with_retry(client=client, entities=file_entities, file_id=file_external_id)
 
     file_annotated_resource_id = file_contextualization_job.result["items"][0]["fileId"]
@@ -460,10 +456,6 @@ def detect_create_annotation(
                     continue
 
                 if not is_black_listed_text(annotation_name):
-                    # if annotation_status == ANNOTATION_STATUS_APPROVED:
-                    #     entity_names_found.append(entity["orgName"])
-                    #     entity_ids_found.append(entity["id"])
-
                     file_annotation_list_to_create.append(
                         Annotation(
                             annotation_type=annotation_type,
