@@ -9,7 +9,7 @@ FILE_ANNOTATION_TYPE = "diagrams.FileLink"
 ANNOTATION_STATUS_APPROVED = "approved"
 ANNOTATION_STATUS_SUGGESTED = "suggested"
 ANNOTATION_RESOURCE_TYPE = "file"
-CREATING_APP = "NationalGrid P&ID contextualization and annotation function"
+CREATING_APP = "Kyoto P&ID contextualization and annotation function"
 CREATING_APPVERSION = "1.0.0"
 
 # Other constants
