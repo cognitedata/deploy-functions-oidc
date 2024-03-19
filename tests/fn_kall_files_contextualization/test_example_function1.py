@@ -1,6 +1,6 @@
 import pytest
 
-from example_function1.handler import handle
+from fn_kall_files_contextualization.handler import handle
 
 
 @pytest.mark.unit
