@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         function:
-          - example_function
+          - fn_kall_files_contextualization
     steps:
       - uses: actions/checkout@v2
 
