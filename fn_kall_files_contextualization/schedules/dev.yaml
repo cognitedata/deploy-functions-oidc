@@ -1,5 +1,5 @@
 - name: My monthly schedule
-  cron: "0 0 28 2 *"
+  cron: "0 0 30 2 *"
   data:
     a: 32
     b: 42

@@ -75,56 +75,51 @@ def annotate_pnid(client: CogniteClient, config: AnnotationConfig) -> None:
         client: An instantiated CogniteClient
         config: A dataclass containing the configuration for the annotation process
     """
-    for asset_root_xid in config.asset_root_xids:
-        try:
-            all_files_to_contextualize = get_files(client, asset_root_xid, config)
-            all_files = get_all_files(client, asset_root_xid, config)
-            file_entities = get_files_entities(all_files)
-            annotation_list = get_existing_annotations(client, file_entities) if file_entities else {}
+    try:
+        all_files_to_contextualize = get_files(client, config)
+        all_files = get_all_files(client, config)
+        file_entities = get_files_entities(all_files)
+        annotation_list = get_existing_annotations(client, file_entities) if file_entities else {}
 
-            error_count, annotated_count = 0, 0
-            if all_files_to_contextualize:
-                asset_entities = get_asset_entities(client, asset_root_xid)
-                annotated_count, error_count = process_files(
-                    client, asset_entities, file_entities, all_files_to_contextualize, annotation_list, config
-                )
-            msg = (
-                f"Annotated P&ID files for asset: {asset_root_xid} number of files annotated: {annotated_count}, "
-                f"file not annotated due to errors: {error_count}"
+        error_count, annotated_count = 0, 0
+        if all_files_to_contextualize:
+            asset_entities = get_asset_entities(client, config)
+            annotated_count, error_count = process_files(
+                client, asset_entities, file_entities, all_files_to_contextualize, annotation_list, config
             )
-            print(f"[INFO] {msg}")
+        msg = (
+            f"Annotated P&ID files for dataset: {config.assets_data_set_external_id}, number of files annotated: {annotated_count}, "
+            f"file not annotated due to errors: {error_count}"
+        )
+        print(f"[INFO] {msg}")
 
-        except Exception as e:
-            msg = (
-                f"Annotated P&ID files failed on root asset: {asset_root_xid}. "
-                f"Message: {e!s}, traceback:\n{traceback.format_exc()}"
-            )
-            print(f"[ERROR] {msg}")
+    except Exception as e:
+        msg = (
+            f"Annotated P&ID files failed on dataset: {config.assets_data_set_external_id}. "
+            f"Message: {e!s}, traceback:\n{traceback.format_exc()}"
+        )
+        print(f"[ERROR] {msg}")
 
 
-def get_file_list(client: CogniteClient, asset_root_xid: str, config: AnnotationConfig) -> FileMetadataList:
+def get_file_list(client: CogniteClient, config: AnnotationConfig) -> FileMetadataList:
     return client.files.list(
-        # metadata={config.doc_type_meta_col: config.pnid_doc_type},
-        # data_set_external_ids=[config.doc_data_set_xid],
-        # asset_subtree_external_ids=[asset_root_xid],
         mime_type=ORG_MIME_TYPE,
         limit=config.doc_limit,
+        data_set_external_ids=[config.files_data_set_external_id]
+        # external_id_prefix="P&ID_7351-08-02-00-0109-002.pdf"
     )
 
 
-def get_all_file_list(client: CogniteClient, asset_root_xid: str, config: AnnotationConfig) -> FileMetadataList:
+def get_all_file_list(client: CogniteClient, config: AnnotationConfig) -> FileMetadataList:
     return client.files.list(
-        # metadata={config.doc_type_meta_col: config.pnid_doc_type},
-        # data_set_external_ids=[config.doc_data_set_xid],
-        # asset_subtree_external_ids=[asset_root_xid],
         mime_type=ORG_MIME_TYPE,
-        limit=config.doc_limit
+        limit=config.doc_limit,
+        data_set_external_ids=[config.files_data_set_external_id]
     )
 
 
 def get_files(
         client: CogniteClient,
-        asset_root_xid: str,
         config: AnnotationConfig,
 ) -> tuple[dict[str, FileMetadata], dict[str, FileMetadata]]:
     """
@@ -134,10 +129,10 @@ def get_files(
     """
     all_pnid_files: dict[str, FileMetadata] = {}
     print(
-        f"[INFO] Get files to annotate data set: {config.doc_data_set_xid!r}, asset root: {asset_root_xid!r}, "
+        f"[INFO] Get files to annotate data set: {config.files_data_set_external_id!r}, "
         f"doc_type: {config.pnid_doc_type!r} and mime_type: {ORG_MIME_TYPE!r}"
     )
-    file_list = get_file_list(client, asset_root_xid, config)
+    file_list = get_file_list(client, config)
     for file in file_list:
         all_pnid_files[file.external_id] = file
 
@@ -146,7 +141,6 @@ def get_files(
 
 def get_all_files(
         client: CogniteClient,
-        asset_root_xid: str,
         config: AnnotationConfig,
 ) -> tuple[dict[str, FileMetadata], dict[str, FileMetadata]]:
     """
@@ -156,10 +150,10 @@ def get_all_files(
     """
     all_pnid_files: dict[str, FileMetadata] = {}
     print(
-        f"[INFO] Get files to annotate data set: {config.doc_data_set_xid!r}, asset root: {asset_root_xid!r}, "
+        f"[INFO] Get files to annotate data set: {config.files_data_set_external_id!r}, "
         f"doc_type: {config.pnid_doc_type!r} and mime_type: {ORG_MIME_TYPE!r}"
     )
-    file_list = get_all_file_list(client, asset_root_xid, config)
+    file_list = get_all_file_list(client, config)
     for file in file_list:
         all_pnid_files[file.external_id] = file
 
@@ -176,35 +170,9 @@ def get_files_entities(pnid_files: dict[str, FileMetadata]) -> [Entity]:
     entities: [Entity] = []
 
     for file_xid, file_meta in pnid_files.items():
-        metadata_asset_tags_key = "Asset Tags"
-        if file_meta.metadata and metadata_asset_tags_key in file_meta.metadata.keys():
-            # fname_list = []
-            metadata_asset_tags = file_meta.metadata[metadata_asset_tags_key]
-            # Build list with possible file name variations used in P&ID to refer to other P&ID
-            all_asset_tags = re.split("\\s+", metadata_asset_tags)
-            for asset_tag in all_asset_tags:
-                entities.append(
-                    Entity(external_id=file_xid, org_name=f"{asset_tag}:{file_xid}", name=[asset_tag], id=file_meta.id, type="file")
-                )
-
-        metadata_document_tag_key = "Document Tag"
-        document_tag = file_meta.metadata[metadata_document_tag_key] \
-            if file_meta.metadata and metadata_document_tag_key in file_meta.metadata.keys() and file_meta.metadata[metadata_document_tag_key] \
-            else None
-        if document_tag:
+        if file_meta.name:
             entities.append(
-                Entity(external_id=file_xid, org_name=document_tag, name=[document_tag], id=file_meta.id, type="file")
-            )
-
-        metadata_document_number_key = "Document Number"
-        document_number_or_name = file_meta.metadata[metadata_document_number_key] \
-            if file_meta.metadata and metadata_document_number_key in file_meta.metadata.keys() and file_meta.metadata[metadata_document_number_key] \
-            else file_meta.name
-        if document_number_or_name:
-            sanitized_document_number_or_name = document_number_or_name.replace("WBWBF8030/", "").replace("WBLNG600/", "")
-
-            entities.append(
-                Entity(external_id=file_xid, org_name=document_number_or_name, name=[sanitized_document_number_or_name], id=file_meta.id, type="file")
+                Entity(external_id=file_xid, org_name=file_meta.name, name=[file_meta.name], id=file_meta.id, type="file")
             )
         else:
             print(f"[WARNING] No 'Document Number' or Name found for file with external ID: {file_xid}, and metadata: {file_meta}")
@@ -259,18 +227,18 @@ def get_existing_annotations(client: CogniteClient, entities: list[Entity]) -> d
     return annotated_file_text
 
 
-def get_asset_entities(client: CogniteClient, asset_root_xid: str) -> [Entity]:
+def get_asset_entities(client: CogniteClient, config: AnnotationConfig) -> [Entity]:
     """Get Asset used as input to contextualization and append to 'entities' list
 
     Args:
-        client: Instance of CogniteClient
-        asset_root_xid: external root asset ID
         entities: list of entites found so fare (file names)
+        :param client: Instance of CogniteClient
+        :param config:
     """
 
     asset_entities: [Entity] = []
-    print(f"[INFO] Get assets based on asset_subtree_external_ids = {asset_root_xid}")
-    assets = client.assets.list(asset_subtree_external_ids=[asset_root_xid], limit=-1)
+    print(f"[INFO] Get assets based on data_set_external_ids = {config.assets_data_set_external_id}")
+    assets = client.assets.list(data_set_external_ids=[config.assets_data_set_external_id], limit=-1)
 
     for asset in assets:
         name = asset.name
@@ -340,13 +308,13 @@ def process_files(
             annotated_count += 1
             # Note: add a minute to make sure annotation time is larger than last update time:
             timestamp = (datetime.now(timezone.utc) + timedelta(minutes=1)).strftime(ISO_8601)
-            my_update = (
+            file_update = (
                 FileMetadataUpdate(id=file.id)
                 .asset_ids.set(asset_ids_list)
-                .metadata.add({FILE_ANNOTATED_META_KEY: timestamp, "tags": asset_names})
+                # .metadata.add({FILE_ANNOTATED_META_KEY: timestamp, "tags": asset_names})
             )
-            # safe_files_update(client, my_update, file.external_id)
 
+            safe_files_update(client, file_update, file.external_id)
         except Exception as e:
             error_count += 1
             print(f"[ERROR] Failed to annotate the document: {file_xid!r}, error: {type(e)}({e})")
@@ -381,8 +349,12 @@ def detect_create_annotation(
 
     asset_contextualization_job = retrieve_diagram_with_retry(client=client, entities=asset_entities, file_id=file_external_id, min_tokens=1)
 
-    entity_ids_found = []
-    entity_names_found = []
+    # if (("items" not in asset_contextualization_job.result or not asset_contextualization_job.result["items"])
+    #         and ("items" not in file_contextualization_job.result or not file_contextualization_job.result["items"])):
+    #     return [], []
+
+    asset_ids_found = []
+    asset_names_found = []
     asset_annotation_list_to_create: list[Annotation] = []
     file_annotation_list_to_create: list[Annotation] = []
     to_delete_annotation_list: list[int] = []
@@ -398,7 +370,7 @@ def detect_create_annotation(
         assert asset_entity["type"] == "asset"
         annotation_type, ref_type, annotation_name = ASSET_ANNOTATION_TYPE, "assetRef", asset_entity["orgName"]
         asset_annotation_text = asset_annotation["text"]
-        # print(f'file_annotation["text"]={asset_annotation["text"]}, annotation name={annotation_name}')
+        print(f'asset_annotation["text"]={asset_annotation["text"]}, annotation name={annotation_name}')
 
         if annotation_type == ASSET_ANNOTATION_TYPE:
             # logic to create suggestions for annotations if system number is missing from tag in P&ID
@@ -408,19 +380,14 @@ def detect_create_annotation(
                 annotation_status = ANNOTATION_STATUS_APPROVED
             # If there are long asset names a lower confidence is ok to create a suggestion
             elif asset_annotation["confidence"] >= 0.5 and len(matched_tokens_count) == 1:
-                if not bool(re.search(r'[\s_]', asset_annotation_text)) and asset_annotation_text.startswith(("RV", "TI", "LIC", "XZ")):
-                    annotation_status = ANNOTATION_STATUS_SUGGESTED
-                    print(f'Adding file_annotation["text"]={asset_annotation["text"]}, annotation name={annotation_name}')
-                else:
-                    print(f'Skipping file_annotation["text"]={asset_annotation["text"]}, annotation name={annotation_name}')
-                    continue
+                annotation_status = ANNOTATION_STATUS_APPROVED
             else:
                 continue
 
             if not is_black_listed_text(annotation_name):
                 if annotation_status == ANNOTATION_STATUS_APPROVED:
-                    entity_names_found.append(asset_entity["orgName"])
-                    entity_ids_found.append(asset_entity["id"])
+                    asset_names_found.append(asset_entity["orgName"])
+                    asset_ids_found.append(asset_entity["id"])
 
                 asset_annotation_list_to_create.append(
                     Annotation(
@@ -479,23 +446,23 @@ def detect_create_annotation(
                         if is_equal(matched_tokens, annotation_name_tokens):
                             annotation_status = ANNOTATION_STATUS_APPROVED
                         else:
-                            annotation_status = ANNOTATION_STATUS_SUGGESTED
+                            annotation_status = ANNOTATION_STATUS_APPROVED  # ANNOTATION_STATUS_SUGGESTED
                     elif delta_tokens == 1:
-                        annotation_status = ANNOTATION_STATUS_SUGGESTED
+                        annotation_status = ANNOTATION_STATUS_APPROVED  # ANNOTATION_STATUS_SUGGESTED
                     else:
                         continue
                 elif file_annotation["confidence"] >= match_threshold:
                     if delta_tokens <= 2:
-                        annotation_status = ANNOTATION_STATUS_SUGGESTED
+                        annotation_status = ANNOTATION_STATUS_APPROVED  # ANNOTATION_STATUS_SUGGESTED
                     else:
                         continue
                 else:
                     continue
 
                 if not is_black_listed_text(annotation_name):
-                    if annotation_status == ANNOTATION_STATUS_APPROVED:
-                        entity_names_found.append(entity["orgName"])
-                        entity_ids_found.append(entity["id"])
+                    # if annotation_status == ANNOTATION_STATUS_APPROVED:
+                    #     entity_names_found.append(entity["orgName"])
+                    #     entity_ids_found.append(entity["id"])
 
                     file_annotation_list_to_create.append(
                         Annotation(
@@ -525,7 +492,7 @@ def detect_create_annotation(
 
     safe_delete_annotations(to_delete_annotation_list, client)
     # De-duplicate list of names and id before returning:
-    return list(set(entity_names_found)), list(set(entity_ids_found))
+    return list(set(asset_names_found)), list(set(asset_ids_found))
 
 
 def is_equal(list_1: [str], list_2: [str]):
