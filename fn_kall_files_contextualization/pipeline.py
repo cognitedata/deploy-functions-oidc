@@ -241,12 +241,12 @@ def get_asset_entities(client: CogniteClient, config: AnnotationConfig) -> [Enti
     assets = client.assets.list(data_set_external_ids=[config.assets_data_set_external_id], limit=-1)
 
     for asset in assets:
-        name = asset.name
+        sanitized_external_id = asset.external_id.replace("kall_", "")
         try:
-            asset_entities.append(Entity(external_id=asset.external_id, org_name=name, name=name, id=asset.id, type="asset"))
+            asset_entities.append(Entity(external_id=asset.external_id, org_name=sanitized_external_id, name=sanitized_external_id, id=asset.id, type="asset"))
         except Exception as e:
             print(
-                f"[ERROR] Not able to get entities for asset name: {name}, id {asset.external_id}. "
+                f"[ERROR] Not able to get entities for asset name: {sanitized_external_id}, id {asset.external_id}. "
                 f"Error: {type(e)}({e})"
             )
 
