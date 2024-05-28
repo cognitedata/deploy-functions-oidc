@@ -4,6 +4,7 @@ import re
 import sys
 import time
 import traceback
+
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -11,17 +12,11 @@ from pathlib import Path
 from typing import Any, Optional
 
 from cognite.client import CogniteClient
-from cognite.client.data_classes import (
-    Annotation,
-    AnnotationFilter,
-    FileMetadata,
-    FileMetadataList,
-    FileMetadataUpdate,
-)
-
+from cognite.client.data_classes import Annotation, AnnotationFilter, FileMetadata, FileMetadataList, FileMetadataUpdate
 from cognite.client.data_classes.contextualization import DiagramDetectResults
 from cognite.client.utils._auxiliary import split_into_chunks
 from cognite.client.utils._text import shorten
+
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -112,15 +107,13 @@ def get_file_list(client: CogniteClient, config: AnnotationConfig) -> FileMetada
 
 def get_all_file_list(client: CogniteClient, config: AnnotationConfig) -> FileMetadataList:
     return client.files.list(
-        mime_type=ORG_MIME_TYPE,
-        limit=config.doc_limit,
-        data_set_external_ids=[config.files_data_set_external_id]
+        mime_type=ORG_MIME_TYPE, limit=config.doc_limit, data_set_external_ids=[config.files_data_set_external_id]
     )
 
 
 def get_files(
-        client: CogniteClient,
-        config: AnnotationConfig,
+    client: CogniteClient,
+    config: AnnotationConfig,
 ) -> tuple[dict[str, FileMetadata], dict[str, FileMetadata]]:
     """
     Read files based on doc_type and mime_type to find P&ID files
@@ -140,8 +133,8 @@ def get_files(
 
 
 def get_all_files(
-        client: CogniteClient,
-        config: AnnotationConfig,
+    client: CogniteClient,
+    config: AnnotationConfig,
 ) -> tuple[dict[str, FileMetadata], dict[str, FileMetadata]]:
     """
     Read files based on doc_type and mime_type to find P&ID files
@@ -172,10 +165,14 @@ def get_files_entities(pnid_files: dict[str, FileMetadata]) -> [Entity]:
     for file_xid, file_meta in pnid_files.items():
         if file_meta.name:
             entities.append(
-                Entity(external_id=file_xid, org_name=file_meta.name, name=[file_meta.name], id=file_meta.id, type="file")
+                Entity(
+                    external_id=file_xid, org_name=file_meta.name, name=[file_meta.name], id=file_meta.id, type="file"
+                )
             )
         else:
-            print(f"[WARNING] No 'Document Number' or Name found for file with external ID: {file_xid}, and metadata: {file_meta}")
+            print(
+                f"[WARNING] No 'Document Number' or Name found for file with external ID: {file_xid}, and metadata: {file_meta}"
+            )
             continue
 
     return entities
@@ -243,7 +240,15 @@ def get_asset_entities(client: CogniteClient, config: AnnotationConfig) -> [Enti
     for asset in assets:
         sanitized_external_id = asset.external_id.replace("kall_", "")
         try:
-            asset_entities.append(Entity(external_id=asset.external_id, org_name=sanitized_external_id, name=sanitized_external_id, id=asset.id, type="asset"))
+            asset_entities.append(
+                Entity(
+                    external_id=asset.external_id,
+                    org_name=sanitized_external_id,
+                    name=sanitized_external_id,
+                    id=asset.id,
+                    type="asset",
+                )
+            )
         except Exception as e:
             print(
                 f"[ERROR] Not able to get entities for asset name: {sanitized_external_id}, id {asset.external_id}. "
@@ -254,12 +259,12 @@ def get_asset_entities(client: CogniteClient, config: AnnotationConfig) -> [Enti
 
 
 def process_files(
-        client: CogniteClient,
-        asset_entities: list[Entity],
-        file_entities: list[Entity],
-        files: dict[str, FileMetadata],
-        annotation_list: dict[Optional[int], list[Optional[int]]],
-        config: AnnotationConfig,
+    client: CogniteClient,
+    asset_entities: list[Entity],
+    file_entities: list[Entity],
+    files: dict[str, FileMetadata],
+    annotation_list: dict[Optional[int], list[Optional[int]]],
+    config: AnnotationConfig,
 ) -> tuple[int, int]:
     """Contextualize files by calling the annotation function
     Then update the metadata for the P&ID input file
@@ -310,8 +315,7 @@ def process_files(
             # Note: add a minute to make sure annotation time is larger than last update time:
             timestamp = (datetime.now(timezone.utc) + timedelta(minutes=1)).strftime(ISO_8601)
             file_update = (
-                FileMetadataUpdate(id=file.id)
-                .asset_ids.set(asset_ids_list)
+                FileMetadataUpdate(id=file.id).asset_ids.set(asset_ids_list)
                 # .metadata.add({FILE_ANNOTATED_META_KEY: timestamp, "tags": asset_names})
             )
 
@@ -324,12 +328,12 @@ def process_files(
 
 
 def detect_create_annotation(
-        client: CogniteClient,
-        match_threshold: float,
-        file_external_id: str,
-        asset_entities: list[Entity],
-        file_entities: list[Entity],
-        annotation_list: dict[Optional[int], list[Optional[int]]],
+    client: CogniteClient,
+    match_threshold: float,
+    file_external_id: str,
+    asset_entities: list[Entity],
+    file_entities: list[Entity],
+    annotation_list: dict[Optional[int], list[Optional[int]]],
 ) -> tuple[list[Any], list[Any]]:
     """
     Detect tags + files and create annotation for P&ID
@@ -348,7 +352,9 @@ def detect_create_annotation(
 
     print(f"Processing file {file_external_id}")
 
-    asset_contextualization_job = retrieve_diagram_with_retry(client=client, entities=asset_entities, file_id=file_external_id, min_tokens=1)
+    asset_contextualization_job = retrieve_diagram_with_retry(
+        client=client, entities=asset_entities, file_id=file_external_id, min_tokens=1
+    )
 
     asset_ids_found = []
     asset_names_found = []
@@ -409,10 +415,14 @@ def detect_create_annotation(
             asset_annotation_list_to_create.clear()
 
     client.annotations.create(asset_annotation_list_to_create)
-    print(f"Completed creating asset annotations for file: {file_external_id}, Created asset annotation count: {len(asset_annotation_list_to_create)}")
+    print(
+        f"Completed creating asset annotations for file: {file_external_id}, Created asset annotation count: {len(asset_annotation_list_to_create)}"
+    )
 
     # File annotation processing
-    file_contextualization_job = retrieve_diagram_with_retry(client=client, entities=file_entities, file_id=file_external_id)
+    file_contextualization_job = retrieve_diagram_with_retry(
+        client=client, entities=file_entities, file_id=file_external_id
+    )
 
     file_annotated_resource_id = file_contextualization_job.result["items"][0]["fileId"]
     if file_annotated_resource_id in annotation_list:
@@ -480,7 +490,9 @@ def detect_create_annotation(
                 file_annotation_list_to_create.clear()
 
     client.annotations.create(file_annotation_list_to_create)
-    print(f"Completed creating file annotations for file: {file_external_id}, Created file annotation count: {len(file_annotation_list_to_create)}")
+    print(
+        f"Completed creating file annotations for file: {file_external_id}, Created file annotation count: {len(file_annotation_list_to_create)}"
+    )
 
     safe_delete_annotations(to_delete_annotation_list, client)
     # De-duplicate list of names and id before returning:
@@ -498,7 +510,12 @@ def is_black_listed_text(text: str):
 
 
 def retrieve_diagram_with_retry(
-        client: CogniteClient, entities: list[Entity], file_id: str, retries: int = 3, min_tokens: int = 2, multiple_jobs: bool = False
+    client: CogniteClient,
+    entities: list[Entity],
+    file_id: str,
+    retries: int = 3,
+    min_tokens: int = 2,
+    multiple_jobs: bool = False,
 ) -> DiagramDetectResults:
     for retry_num in range(1, retries + 1):
         try:
@@ -508,7 +525,7 @@ def retrieve_diagram_with_retry(
                 entities=[e.dump() for e in entities],
                 partial_match=True,
                 min_tokens=min_tokens,
-                multiple_jobs=multiple_jobs
+                multiple_jobs=multiple_jobs,
             )
         except Exception as e:
             # retry func if CDF api returns an error
@@ -560,9 +577,9 @@ def safe_delete_annotations(delete_annotation_list: list[int], client: CogniteCl
 
 
 def safe_files_update(
-        client: CogniteClient,
-        file_update: FileMetadataUpdate,
-        file_xid: str,
+    client: CogniteClient,
+    file_update: FileMetadataUpdate,
+    file_xid: str,
 ) -> None:
     """
     Update metadata of original pdf file with list of tags
