@@ -86,7 +86,7 @@ jobs:
           schedules_tenant_id: f063ad76-1dca-47d4-b846-3ebd24730338
           cdf_project: kyotogroup-dev  # or my-company, my-organisation-prod etc.
           cdf_cluster: westeurope-1  # or api, westeurope-1, etc.
-          runtime: py39
+          runtime: py311
 
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}

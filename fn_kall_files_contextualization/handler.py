@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import os
 import sys
+
 from pathlib import Path
-from config import AnnotationConfig
+
 from cognite.client import ClientConfig, CogniteClient
 from cognite.client.credentials import OAuthClientCredentials
+from config import AnnotationConfig
+
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -19,7 +22,13 @@ def handle(data: dict, client: CogniteClient) -> dict:
 
 
 def run_locally():
-    required_envvars = ("KYOTO_CDF_PROJECT", "KYOTO_CDF_CLUSTER", "KYOTO_IDP_CLIENT_ID", "KYOTO_IDP_CLIENT_SECRET", "KYOTO_IDP_TOKEN_URL")
+    required_envvars = (
+        "KYOTO_CDF_PROJECT",
+        "KYOTO_CDF_CLUSTER",
+        "KYOTO_IDP_CLIENT_ID",
+        "KYOTO_IDP_CLIENT_SECRET",
+        "KYOTO_IDP_TOKEN_URL",
+    )
     if missing := [envvar for envvar in required_envvars if envvar not in os.environ]:
         raise ValueError(f"Missing one or more env.vars: {missing}")
 
