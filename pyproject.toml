@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "deploy-functions-oidc-template"
+name = "kyoto-functions"
 version = "1.7.0"
 description = "Cognite Functions template for OIDC projects"
 authors = ["hakon.treider@cognite.com"]
