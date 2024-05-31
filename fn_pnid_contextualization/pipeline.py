@@ -332,7 +332,7 @@ def detect_create_annotation(
             if asset_annotation["confidence"] >= match_threshold and len(asset_annotation["entities"]) == 1:
                 annotation_status = ANNOTATION_STATUS_APPROVED
             # If there are long asset names a lower confidence is ok to create a suggestion
-            elif asset_annotation["confidence"] >= 0.5 and len(matched_tokens_count) == 1:
+            elif asset_annotation["confidence"] >= 0.7 and len(matched_tokens_count) == 1:
                 annotation_status = ANNOTATION_STATUS_APPROVED
             else:
                 continue
