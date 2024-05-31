@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         function:
-          - fn_kall_files_contextualization
+          - fn_pnid_contextualization
     steps:
       - uses: actions/checkout@v2
 
