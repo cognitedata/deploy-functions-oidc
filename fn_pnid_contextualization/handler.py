@@ -16,7 +16,7 @@ from pipeline import annotate_pnid
 
 
 def handle(data: dict, client: CogniteClient) -> dict:
-    config = AnnotationConfig()
+    config = AnnotationConfig(data)
     annotate_pnid(client, config)
     return {"status": "succeeded", "data": data}
 
@@ -29,6 +29,7 @@ def run_locally():
         "KYOTO_IDP_CLIENT_SECRET",
         "KYOTO_IDP_TOKEN_URL",
     )
+
     if missing := [envvar for envvar in required_envvars if envvar not in os.environ]:
         raise ValueError(f"Missing one or more env.vars: {missing}")
 
@@ -41,7 +42,7 @@ def run_locally():
 
     client = CogniteClient(
         ClientConfig(
-            client_name="Toolkit user: Manual P&ID pipeline",
+            client_name="P&ID pipeline",
             base_url=base_url,
             project=cdf_project_name,
             credentials=OAuthClientCredentials(
@@ -53,7 +54,7 @@ def run_locally():
         )
     )
 
-    handle({}, client)
+    handle({"files_data_set_external_id": "src:kall:limber", "assets_data_set_external_id": "src:kall:assets", "batch_size": -1}, client)
 
 
 if __name__ == "__main__":

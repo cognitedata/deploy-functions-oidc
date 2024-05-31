@@ -1,0 +1,13 @@
+- name: Norbis Park Schedule
+  cron: "*/10 * * * *"
+  data:
+    assets_data_set_external_id: "src:njv:assets"
+    files_data_set_external_id: "src:njv:limber"
+    batch_size: 10
+
+- name: Kall Schedule
+  cron: "*/10 * * * *"
+  data:
+    assets_data_set_external_id: "src:kall:assets"
+    files_data_set_external_id: "src:kall:limber"
+    batch_size: 10
