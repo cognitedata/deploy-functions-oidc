@@ -4,6 +4,7 @@ import re
 import sys
 import time
 import traceback
+
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -14,7 +15,6 @@ from cognite.client.data_classes import Annotation, AnnotationFilter, FileMetada
 from cognite.client.data_classes.contextualization import DiagramDetectResults
 from cognite.client.utils._auxiliary import split_into_chunks
 from cognite.client.utils._text import shorten
-
 from config import AnnotationConfig
 from constants import (
     ANNOTATION_RESOURCE_TYPE,
@@ -26,6 +26,7 @@ from constants import (
     FILE_ANNOTATION_TYPE,
     ORG_MIME_TYPE,
 )
+
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -216,12 +217,12 @@ def get_asset_entities(client: CogniteClient, config: AnnotationConfig) -> [Enti
 
 
 def process_files(
-        client: CogniteClient,
-        asset_entities: list[Entity],
-        file_entities: list[Entity],
-        files: dict[str, FileMetadata],
-        annotation_list: dict[Optional[int], list[Optional[int]]],
-        config: AnnotationConfig,
+    client: CogniteClient,
+    asset_entities: list[Entity],
+    file_entities: list[Entity],
+    files: dict[str, FileMetadata],
+    annotation_list: dict[Optional[int], list[Optional[int]]],
+    config: AnnotationConfig,
 ) -> tuple[int, int]:
     """Contextualize files by calling the annotation function
     Then update the metadata for the P&ID input file
@@ -280,12 +281,12 @@ def process_files(
 
 
 def detect_create_annotation(
-        client: CogniteClient,
-        match_threshold: float,
-        file_external_id: str,
-        asset_entities: list[Entity],
-        file_entities: list[Entity],
-        annotation_list: dict[Optional[int], list[Optional[int]]],
+    client: CogniteClient,
+    match_threshold: float,
+    file_external_id: str,
+    asset_entities: list[Entity],
+    file_entities: list[Entity],
+    annotation_list: dict[Optional[int], list[Optional[int]]],
 ) -> tuple[list[Any], list[Any]]:
     """
     Detect tags + files and create annotation for P&ID
@@ -462,12 +463,12 @@ def is_black_listed_text(text: str):
 
 
 def retrieve_diagram_with_retry(
-        client: CogniteClient,
-        entities: list[Entity],
-        file_id: str,
-        retries: int = 3,
-        min_tokens: int = 2,
-        multiple_jobs: bool = False,
+    client: CogniteClient,
+    entities: list[Entity],
+    file_id: str,
+    retries: int = 3,
+    min_tokens: int = 2,
+    multiple_jobs: bool = False,
 ) -> DiagramDetectResults:
     for retry_num in range(1, retries + 1):
         try:
@@ -529,9 +530,9 @@ def safe_delete_annotations(delete_annotation_list: list[int], client: CogniteCl
 
 
 def safe_files_update(
-        client: CogniteClient,
-        file_update: FileMetadataUpdate,
-        file_external_id: str,
+    client: CogniteClient,
+    file_update: FileMetadataUpdate,
+    file_external_id: str,
 ) -> None:
     """
     Update metadata of original pdf file with list of tags
