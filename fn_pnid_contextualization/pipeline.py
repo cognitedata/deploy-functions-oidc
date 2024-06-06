@@ -83,7 +83,11 @@ def annotate_pnid(client: CogniteClient, config: AnnotationConfig) -> None:
                     file_external_id = all_file_ids_to_external_id[file_id]
                     remaining_files_to_annotate[file_external_id] = all_file_external_ids_to_metadata[file_external_id]
         else:
-            remaining_files_to_annotate = dict(list(all_file_external_ids_to_metadata.items())[:config.batch_size]) if config.batch_size != -1 else dict(list(all_file_external_ids_to_metadata.items()))
+            remaining_files_to_annotate = (
+                dict(list(all_file_external_ids_to_metadata.items())[: config.batch_size])
+                if config.batch_size != -1
+                else dict(list(all_file_external_ids_to_metadata.items()))
+            )
 
         error_count, annotated_count = 0, 0
         if remaining_files_to_annotate:
@@ -140,7 +144,11 @@ def get_all_file_entities(all_pnid_files: dict[str, FileMetadata] = {}) -> [Enti
         if file_meta.name:
             entities.append(
                 Entity(
-                    external_id=file_external_id, org_name=file_meta.name, name=[file_meta.name], id=file_meta.id, type="file"
+                    external_id=file_external_id,
+                    org_name=file_meta.name,
+                    name=[file_meta.name],
+                    id=file_meta.id,
+                    type="file",
                 )
             )
         else:
@@ -168,7 +176,8 @@ def get_existing_annotations(client: CogniteClient, entities: list[Entity]) -> d
 
     for sub_file_list in split_into_chunks(file_ids, 1000):
         annotation_list = client.annotations.list(
-            AnnotationFilter(annotated_resource_type="file", annotated_resource_ids=sub_file_list), limit=None,
+            AnnotationFilter(annotated_resource_type="file", annotated_resource_ids=sub_file_list),
+            limit=None,
         )
 
         for annotation in annotation_list:
@@ -266,9 +275,7 @@ def process_files(
                 continue
 
             annotated_count += 1
-            file_update = (
-                FileMetadataUpdate(id=file.id).asset_ids.set(asset_ids_list)
-            )
+            file_update = FileMetadataUpdate(id=file.id).asset_ids.set(asset_ids_list)
 
             safe_files_update(client, file_update, file.external_id)
         except Exception as e:
@@ -325,7 +332,7 @@ def detect_create_annotation(
         assert annotation_type == ASSET_ANNOTATION_TYPE
 
         if 3 <= len(annotation_name):
-            print(f'annotation name={annotation_name}')
+            print(f"annotation name={annotation_name}")
             # Logic to create suggestions for annotations if system number is missing from tag in P&ID
             # but a suggestion matches the most frequent system number from P&ID
             matched_tokens_count = annotation_name.split("-")
