@@ -3,11 +3,11 @@
   data:
     assets_data_set_external_id: "src:njv:assets"
     files_data_set_external_id: "src:njv:limber"
-    batch_size: 40
+    batch_size: 25
 
 - name: Kall Schedule
   cron: "*/15 * * * *"
   data:
     assets_data_set_external_id: "src:kall:assets"
     files_data_set_external_id: "src:kall:limber"
-    batch_size: 40
+    batch_size: 25

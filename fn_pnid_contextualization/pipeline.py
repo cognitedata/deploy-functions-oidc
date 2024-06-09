@@ -162,7 +162,10 @@ def get_remaining_files_to_annotate(client: CogniteClient, config: AnnotationCon
     remaining_files_to_annotate: dict[str, FileMetadata] = {}
 
     for file in file_list:
-        if FILE_ANNOTATED_META_KEY not in file.metadata.keys():
+        if file.metadata:
+            if FILE_ANNOTATED_META_KEY not in file.metadata.keys():
+                remaining_files_to_annotate[file.external_id] = file
+        else:
             remaining_files_to_annotate[file.external_id] = file
 
     return (
