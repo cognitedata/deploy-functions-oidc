@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import re
 import sys
 import time
@@ -7,6 +8,7 @@ import traceback
 
 from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -23,7 +25,9 @@ from constants import (
     ASSET_MAX_LEN_META,
     CREATING_APP,
     CREATING_APPVERSION,
+    FILE_ANNOTATED_META_KEY,
     FILE_ANNOTATION_TYPE,
+    ISO_8601,
     ORG_MIME_TYPE,
 )
 
@@ -69,22 +73,9 @@ def annotate_pnid(client: CogniteClient, config: AnnotationConfig) -> None:
         all_file_external_ids_to_metadata, all_file_ids_to_external_id = get_all_files(client, config)
         all_file_entities = get_all_file_entities(all_file_external_ids_to_metadata)
         annotation_list = get_existing_annotations(client, all_file_entities) if all_file_entities else {}
-        remaining_files_to_annotate: dict[str, FileMetadata] = {}
-
-        if annotation_list and config.batch_size != -1:
-            count = 0
-            for file_id, file_annotations in annotation_list.items():
-                if len(file_annotations) == 0 and count < config.batch_size:
-                    file_external_id = all_file_ids_to_external_id[file_id]
-                    remaining_files_to_annotate[file_external_id] = all_file_external_ids_to_metadata[file_external_id]
-        else:
-            remaining_files_to_annotate = (
-                dict(list(all_file_external_ids_to_metadata.items())[: config.batch_size])
-                if config.batch_size != -1
-                else dict(list(all_file_external_ids_to_metadata.items()))
-            )
-
+        remaining_files_to_annotate = get_remaining_files_to_annotate(client, config)
         error_count, annotated_count = 0, 0
+
         if remaining_files_to_annotate:
             asset_entities = get_asset_entities(client, config)
             annotated_count, error_count = process_files(
@@ -155,6 +146,32 @@ def get_all_file_entities(all_pnid_files: dict[str, FileMetadata] = {}) -> [Enti
     return entities
 
 
+def get_remaining_files_to_annotate(client: CogniteClient, config: AnnotationConfig) -> dict[str, FileMetadata]:
+    """
+    Read list of already annotated files and get corresponding annotations
+
+    :param client: Dict of files found based on filter
+    :param config: Annotation configuration
+
+    :returns: dictionary of annotations
+    """
+    file_list = client.files.list(
+        mime_type=ORG_MIME_TYPE, limit=config.doc_limit, data_set_external_ids=[config.files_data_set_external_id]
+    )
+
+    remaining_files_to_annotate: dict[str, FileMetadata] = {}
+
+    for file in file_list:
+        if FILE_ANNOTATED_META_KEY not in file.metadata.keys():
+            remaining_files_to_annotate[file.external_id] = file
+
+    return (
+        remaining_files_to_annotate
+        if config.batch_size <= 0 or len(remaining_files_to_annotate) <= config.batch_size
+        else dict(itertools.islice(remaining_files_to_annotate.items(), config.batch_size))
+    )
+
+
 def get_existing_annotations(client: CogniteClient, entities: list[Entity]) -> dict[Optional[int], list[Optional[int]]]:
     """
     Read list of already annotated files and get corresponding annotations
@@ -220,7 +237,7 @@ def process_files(
     client: CogniteClient,
     asset_entities: list[Entity],
     file_entities: list[Entity],
-    files: dict[str, FileMetadata],
+    files_to_annotate: dict[str, FileMetadata],
     annotation_list: dict[Optional[int], list[Optional[int]]],
     config: AnnotationConfig,
 ) -> tuple[int, int]:
@@ -231,7 +248,7 @@ def process_files(
         client: client id used to connect to CDF
         asset_entities: list of asset entities that are used to match content in file
         file_entities: list of file entities that are used to match the content in file
-        files: dict of files found based on filter
+        files_to_annotate: dict of files found based on filter
         annotation_list: list of existing annotations for input files
         config: configuration for the annotation process
 
@@ -242,7 +259,7 @@ def process_files(
     error_count = 0
     annotation_list = annotation_list or {}
 
-    for file_xid, file in files.items():
+    for file_xid, file in files_to_annotate.items():
         try:
             # contextualize, create annotation and get list of matched tags
             entities_name_found, entities_id_found = detect_create_annotation(
@@ -270,7 +287,12 @@ def process_files(
                 continue
 
             annotated_count += 1
-            file_update = FileMetadataUpdate(id=file.id).asset_ids.set(asset_ids_list)
+            timestamp = datetime.now(timezone.utc).strftime(ISO_8601)
+            file_update = (
+                FileMetadataUpdate(id=file.id)
+                .asset_ids.set(asset_ids_list)
+                .metadata.add({FILE_ANNOTATED_META_KEY: timestamp})
+            )
 
             safe_files_update(client, file_update, file.external_id)
         except Exception as e:
@@ -545,6 +567,7 @@ def safe_files_update(
         file_external_id: file to be updated
     """
     try:
+        print(f"Updating annotations for {file_external_id}")
         client.files.update(file_update)
     except Exception as e:
         print(f"[ERROR] Failed to update the file {file_external_id!r}, error: {type(e)}({e})")
