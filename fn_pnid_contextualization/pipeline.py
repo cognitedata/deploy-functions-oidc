@@ -1,14 +1,13 @@
-from __future__ import annotations
-
 import itertools
 import re
 import sys
 import time
 import traceback
 
+from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -25,6 +24,7 @@ from constants import (
     ASSET_MAX_LEN_META,
     CREATING_APP,
     CREATING_APPVERSION,
+    FILE_ANNOTATED_META_ERROR,
     FILE_ANNOTATED_META_KEY,
     FILE_ANNOTATION_TYPE,
     ISO_8601,
@@ -299,6 +299,11 @@ def process_files(
 
             safe_files_update(client, file_update, file.external_id)
         except Exception as e:
+            file_update = FileMetadataUpdate(id=file.id).metadata.add(
+                {FILE_ANNOTATED_META_KEY: FILE_ANNOTATED_META_ERROR}
+            )
+
+            safe_files_update(client, file_update, file.external_id)
             error_count += 1
             print(f"[ERROR] Failed to annotate the document: {file_xid!r}, error: {type(e)}({e})")
 

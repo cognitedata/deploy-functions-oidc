@@ -1,6 +1,7 @@
 # P&ID original file defaults
 ORG_MIME_TYPE = "application/pdf"
 FILE_ANNOTATED_META_KEY = "PnIDAnnotatedTimestamp"
+FILE_ANNOTATED_META_ERROR = "Error"
 ANNOTATION_ERROR_MSG = "annotation_created_error"
 
 # Annotation defaults
