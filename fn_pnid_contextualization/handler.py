@@ -57,7 +57,7 @@ def run_locally():
         {
             "files_data_set_external_id": "src:kall:limber",
             "assets_data_set_external_id": "src:kall:assets",
-            "batch_size": 10,
+            "batch_size": 15,
         },
         client,
     )
