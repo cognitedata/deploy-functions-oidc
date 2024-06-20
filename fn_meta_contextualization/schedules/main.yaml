@@ -1,0 +1,15 @@
+- name: Norbis Park Schedule
+  cron: "0 0 * * *"
+  data:
+    assets_data_set_external_id: "src:njv:assets"
+    files_data_set_external_id: "src:njv:limber"
+    reset: False
+    heatcube_control_asset_external_id: "C"
+
+- name: Kall Schedule
+  cron: "0 0 * * *"
+  data:
+    assets_data_set_external_id: "src:kall:assets"
+    files_data_set_external_id: "src:kall:limber"
+    reset: False
+    heatcube_control_asset_external_id: "kall_C"

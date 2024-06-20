@@ -8,7 +8,7 @@ jobs:
   generate-matrix:
     uses: "./.github/workflows/generate-matrix.yaml"
     with:
-      deploy_folders: "fn_pnid_contextualization"   # "example_function1, example_function2"
+      deploy_folders: "fn_meta_contextualization, fn_pnid_contextualization"
       trigger_deploy_all_folders: "common"
 
   deploy:
