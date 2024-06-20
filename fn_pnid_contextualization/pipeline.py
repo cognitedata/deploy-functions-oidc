@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import itertools
 import re
 import sys
 import time
 import traceback
 
-from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
