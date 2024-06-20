@@ -4,15 +4,13 @@ import os
 import sys
 
 from pathlib import Path
-
+from pipeline import annotate_pnid
 from cognite.client import ClientConfig, CogniteClient
 from cognite.client.credentials import OAuthClientCredentials
 from config import AnnotationConfig
 
 
 sys.path.append(str(Path(__file__).parent))
-
-from pipeline import annotate_pnid
 
 
 def handle(data: dict, client: CogniteClient) -> dict:
