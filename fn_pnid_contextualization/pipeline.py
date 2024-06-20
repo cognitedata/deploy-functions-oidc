@@ -198,7 +198,7 @@ def get_existing_annotations(client: CogniteClient, entities: list[Entity]) -> d
 
         for annotation in annotation_list:
             # Only get old annotations created by this app - do not touch manual or other created annotations
-            if annotation.creating_app == CREATING_APP:
+            if "annotation function" in annotation.creating_app:  # annotation.creating_app == CREATING_APP:
                 annotated_file_text[annotation.annotated_resource_id].append(annotation.id)
     return annotated_file_text
 
@@ -265,14 +265,15 @@ def process_files(
 
     for file_xid, file in files_to_annotate.items():
         try:
-            # contextualize, create annotation and get list of matched tags
+            # Contextualize, create annotation and get list of matched tags
             entities_name_found, entities_id_found = detect_create_annotation(
                 client, config.match_threshold, file_xid, asset_entities, file_entities, annotation_list
             )
-            # create a string of matched tag - to be added to metadata
+
+            # Create a string of matched tag - to be added to metadata
             asset_names = shorten(",".join(map(str, entities_name_found)), ASSET_MAX_LEN_META)
 
-            # merge existing assets with new-found, and create a list without duplicates
+            # Merge existing assets with new-found, and create a list without duplicates
             file_asset_ids = file.asset_ids or []
             asset_ids_list = list(set(file_asset_ids + entities_id_found))
 
@@ -359,8 +360,6 @@ def detect_create_annotation(
 
         if 3 <= len(annotation_name):
             print(f"annotation name={annotation_name}")
-            # Logic to create suggestions for annotations if system number is missing from tag in P&ID
-            # but a suggestion matches the most frequent system number from P&ID
             matched_tokens_count = annotation_name.split("-")
             if asset_annotation["confidence"] >= match_threshold and len(asset_annotation["entities"]) == 1:
                 annotation_status = ANNOTATION_STATUS_APPROVED
@@ -436,14 +435,14 @@ def detect_create_annotation(
                         if is_equal(matched_tokens, annotation_name_tokens):
                             annotation_status = ANNOTATION_STATUS_APPROVED
                         else:
-                            annotation_status = ANNOTATION_STATUS_APPROVED  # ANNOTATION_STATUS_SUGGESTED
+                            annotation_status = ANNOTATION_STATUS_APPROVED
                     elif delta_tokens == 1:
-                        annotation_status = ANNOTATION_STATUS_APPROVED  # ANNOTATION_STATUS_SUGGESTED
+                        annotation_status = ANNOTATION_STATUS_APPROVED
                     else:
                         continue
                 elif file_annotation["confidence"] >= match_threshold:
                     if delta_tokens <= 2:
-                        annotation_status = ANNOTATION_STATUS_APPROVED  # ANNOTATION_STATUS_SUGGESTED
+                        annotation_status = ANNOTATION_STATUS_APPROVED
                     else:
                         continue
                 else:

@@ -1,6 +1,6 @@
 common_folder: common
 description: "File contextualization function based on metadata"
 owner: project-ignis
-cpu: "2"
-memory: "5"
+cpu: "1"
+memory: "4"
 env_vars:
