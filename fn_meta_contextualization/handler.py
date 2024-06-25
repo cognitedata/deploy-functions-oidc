@@ -33,7 +33,7 @@ def handle(data: dict, client: CogniteClient) -> dict:
 
 def get_asset_ids(file, all_assets, default_matching_asset):
     matching_asset_ids = []
-    if file.metadata and file.metadata[METADATA_LIMBER_FILE_COMPONENT_TAGS]:
+    if file.metadata and METADATA_LIMBER_FILE_COMPONENT_TAGS in file.metadata.keys():
         file_tags = [tag.strip() for tag in file.metadata[METADATA_LIMBER_FILE_COMPONENT_TAGS].split(",")]
         if file_tags:
             for file_tag in file_tags:
