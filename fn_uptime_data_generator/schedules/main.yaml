@@ -1,0 +1,4 @@
+- name: Norbis Park Schedule
+  cron: "0 1 * * *"
+  data:
+    timezone: "UTC"

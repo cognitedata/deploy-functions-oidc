@@ -1,0 +1,6 @@
+common_folder: common
+description: "PnID contextualization function"
+owner: project-ignis
+cpu: "2"
+memory: "5"
+env_vars:
