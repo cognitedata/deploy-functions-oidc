@@ -124,7 +124,7 @@ but it doesn't hurt to be specific here!
 Example ``requirements.txt`` file
 
 ```text
-cognite-sdk>=5.9.0
+cognite-sdk>=7.60
 function/my_private_package-1.3.1-py3-none-any.whl
 python-dotenv==0.19.2
 ```
