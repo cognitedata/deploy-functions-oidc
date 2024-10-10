@@ -87,6 +87,7 @@ jobs:
           cdf_project: forge-sandbox  # or my-company, my-organisation-prod etc.
           cdf_cluster: greenfield  # or api, westeurope-1, etc.
           runtime: py39
+          await_deployment_success: true  # set to false to skip waiting for deployments entirely
 
           # Parameters we can read/extract automatically:
           function_folder: ${{ matrix.function }}
