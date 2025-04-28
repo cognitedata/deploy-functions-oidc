@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
@@ -32,7 +32,7 @@ jobs:
 
       - name: Load cached poetry venv
         id: cached-poetry-venv
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/deploy-pr.yaml') }}
