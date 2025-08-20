@@ -1,3 +1,6 @@
+# ⚠️ Deprecation Notice
+This template repository is deprecated and no longer maintained. For new projects, we recommend using the Cognite Data Function Toolkit to deploy functions.
+
 ## Cognite function template [1.7.0]
 
 ### NB: Due to how we have to deploy code, [running locally](https://github.com/cognitedata/deploy-functions-oidc#run-code-locally) requires an extra step. Please read it!
